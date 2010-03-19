@@ -1,0 +1,7 @@
+[ui]
+username = Felix S. Klock <fklockii@adobe.com>
+
+[diff]
+# Note: makes diff's incompatible with UNIX patch; if that matters,
+# then either use patch -p1 or get rid of this.
+git = True
