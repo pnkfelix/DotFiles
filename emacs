@@ -1,3 +1,5 @@
+;; -*- lisp -*-
+
 (setq load-path (cons "~/ConfigFiles/Elisp" load-path))
 (require 'whitespace)
 
