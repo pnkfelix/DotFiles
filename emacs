@@ -1,4 +1,4 @@
-;; -*- lisp -*-
+;; -*- mode: lisp; indent-tabs-mode: nil -*-
 
 (setq load-path (cons "~/ConfigFiles/Elisp" load-path))
 (require 'whitespace)
@@ -8,13 +8,13 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(whitespace-style (quote (trailing lines tabs space-before-tab empty))))
+ '(whitespace-style (quote (trailing tabs space-before-tab empty))))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- )
+ '(whitespace-line ((t (:background "alice blue")))))
 
 (global-whitespace-mode 1)
 (column-number-mode 1)
@@ -30,8 +30,8 @@
 ;; rendering for Fedora and OS X 
 (setq whitespace-display-mappings 
       '((space-mark ?\  [?\u00B7]) 
-	(newline-mark ?\n [?$ ?\n]) 
-	(tab-mark ?\t [?\u00BB ?\t])))
+        (newline-mark ?\n [?$ ?\n]) 
+        (tab-mark ?\t [?\u00BB ?\t])))
 
 (defvar my-fullscreen-p t "Check if fullscreen is on or off")
 (defun my-toggle-fullscreen ()
