@@ -1,5 +1,6 @@
 [ui]
 username = Felix S. Klock <fklockii@adobe.com>
+ignore = ~/.hgignore
 
 [diff]
 # Note: makes diff's incompatible with UNIX patch; if that matters,
@@ -8,3 +9,15 @@ git = True
 
 [extensions]
 progress =
+# graphviz = ~/Dev/Mercurial/graphviz.py
+
+[paths]
+# default = /Users/fklockii/Dev/tamarin-redux
+tr = http://hg.mozilla.org/tamarin-redux
+
+[merge-patterns]
+myfile = emacsclient
+
+[merge-tools]
+emacs.args = -q --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
+emacsclient.args = --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
