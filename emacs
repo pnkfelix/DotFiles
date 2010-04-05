@@ -2,12 +2,14 @@
 
 (setq load-path (cons "~/ConfigFiles/Elisp" load-path))
 (require 'whitespace)
+(require 'uniquify)
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
+ '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
  '(whitespace-style (quote (trailing tabs space-before-tab empty))))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
@@ -22,6 +24,10 @@
 (scroll-bar-mode -1)
 (transient-mark-mode 1)
 (show-paren-mode 1)
+
+;; From: http://www.emacswiki.org/emacs/IndentingC
+;; (makes left-curly line up with start of if token, among other things)
+(setq c-default-style "linux" c-basic-offset 4)
 
 (server-start)
 (setenv "EDITOR" "emacsclient")
