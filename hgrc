@@ -21,3 +21,5 @@ myfile = emacsclient
 [merge-tools]
 emacs.args = -q --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
 emacsclient.args = --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
+emacsclient.priority = 100
+emacs.priority       =  99
