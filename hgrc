@@ -10,6 +10,8 @@ git = True
 [extensions]
 progress =
 # graphviz = ~/Dev/Mercurial/graphviz.py
+hgext.mq =
+rebase =
 
 [paths]
 # default = /Users/fklockii/Dev/tamarin-redux
