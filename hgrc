@@ -10,6 +10,7 @@ git = True
 [extensions]
 progress =
 # graphviz = ~/Dev/Mercurial/graphviz.py
+hgk =
 hgext.mq =
 rebase =
 
