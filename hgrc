@@ -2,10 +2,21 @@
 username = Felix S. Klock <fklockii@adobe.com>
 ignore = ~/.hgignore
 
+[defaults]
+diff=-p -U 8
+
 [diff]
 # Note: makes diff's incompatible with UNIX patch; if that matters,
 # then either use patch -p1 or get rid of this.
 git = True
+
+[alias]
+# show files affected by all applied patches
+qpstatus = status --rev qparent
+# show diff for all applied patches
+qpdiff = diff --rev qparent
+# show revision history since qparent (last pulled revision)
+qlog = log -r qtip:qparent
 
 [extensions]
 progress =
@@ -13,16 +24,23 @@ progress =
 hgk =
 hgext.mq =
 rebase =
+children =
+graphlog =
 
 [paths]
 # default = /Users/fklockii/Dev/tamarin-redux
 tr = http://hg.mozilla.org/tamarin-redux
+sandbox1 = http://asteam.macromedia.com/hg/users/fklockii/tr-sandbox1/
+dev-tr = /Users/fklockii/Dev/tamarin-redux
+bug-tr = /Users/fklockii/Dev/Bugz/tamarin-redux
 
 [merge-patterns]
 myfile = emacsclient
 
 [merge-tools]
-emacs.args = -q --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
-emacsclient.args = --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
-emacsclient.priority = 100
-emacs.priority       =  99
+#emacs.executable = /Applications/Emacs.app/Contents/MacOS/Emacs
+#emacs.args = -q --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
+#emacs.args = -q --eval "(emerge-files-with-ancestor nil \"$local\" \"$other\" \"$base\" \"$output\" nil 'kill-emacs)"
+#emacsclient.args = --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
+#emacsclient.priority = 100
+#emacs.priority       =  99
