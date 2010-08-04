@@ -37,6 +37,7 @@
 ;; (makes left-curly line up with start of if token, among other things)
 (setq c-default-style "linux" c-basic-offset 4)
 
+(require 'server)
 (when (not (server-running-p))
   (server-start)
   (setenv "EDITOR" "emacsclient"))
