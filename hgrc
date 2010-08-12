@@ -26,6 +26,8 @@ hgext.mq =
 rebase =
 children =
 graphlog =
+transplant =
+bookmarks =
 
 [paths]
 # default = /Users/fklockii/Dev/tamarin-redux
