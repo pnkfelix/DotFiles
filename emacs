@@ -37,6 +37,7 @@
 ;; (makes left-curly line up with start of if token, among other things)
 (setq c-default-style "linux" c-basic-offset 4)
 
+(require 'server)
 (when (not (server-running-p))
   (server-start)
   (setenv "EDITOR" "emacsclient"))
@@ -64,6 +65,7 @@
         ((null l) nil)))
 
 (defun compile-including-xcode ()
+  "Compile first looking for Xcode support in current directory."
   (interactive)
   (let* ((suffix ".xcodeproj")
          (dirent-is-xcodeproj
@@ -80,6 +82,7 @@
       (compile "make"))))
 
 (defun compile-in-compilation-buffer ()
+  "Reattempt current compilation."
   (interactive)
   (switch-to-buffer "*compilation*")
   (compile-including-xcode))
@@ -106,3 +109,10 @@
 
 (setq font-lock-maximum-decoration
       '((c-mode . 2) (c++-mode . 2)))
+
+(set-frame-height last-event-frame 120)
+
+(defun frame-80 ()
+  "Resize current frame to be 80 characters."
+  (interactive)
+  (set-frame-width (selected-frame) 80))
