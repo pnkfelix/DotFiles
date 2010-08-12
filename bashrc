@@ -19,17 +19,85 @@ fi
 ## http://www.jonmaddox.com/2008/03/13/show-your-git-branch-name-in-your-prompt/
 
 function parse_git_branch {
-  if git branch 2>/dev/null 1> /dev/null ; then
-    echo \ \(git:$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')\)
+  output=$(git branch --no-color 2>/dev/null)
+  errstate=$?
+  if [ $errstate -eq 0 ] ; then
+    output2=$(echo "$output" | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
+    echo \ \(git:$output2\)
   fi
 }
 
-function parse_hg_branch {
-  if hg branch 2> /dev/null 1>/dev/null ; then
-    echo \ \(hg:$(hg branch)\)
+function parse_hg_branch_orig {
+  output=$(hg branch 2> /dev/null)
+  errstate=$?
+  if [ $errstate -eq 0 ] ; then
+     echo \ \(hg:$output\)
   fi
+}
+
+function search_parents_for_dothg {
+  curpath=$(pwd)
+  found_dothg=0
+  while [ "$curpath" != "/" ] ; do
+    if [ -e "$curpath/.hg" ] ; then
+      found_dothg=1
+      export last_hg_path="$curpath/.hg"
+    fi
+    curpath=$(dirname "$curpath")
+  done
+  return $found_dothg
+}
+
+function parse_hg_branch_prepass {
+  if ! search_parents_for_dothg ; then
+     parse_hg_branch_orig
+  fi
+}
+
+# avoids invoking python
+function parse_hg_branch {
+  if ! search_parents_for_dothg ; then
+    if [ -e "$last_hg_path/branch" ] ; then
+      echo \ \(hg:$(cat "$last_hg_path/branch")\)
+    fi
+  fi
+}
+
+function top_two_dirs {
+   CWD=$(pwd)
+   echo $(basename $(dirname $CWD))/$(basename $CWD)
+}
+
+function check_test {
+   errstate=1
+   gudstate=0
+   if [ $errstate -eq 0 ] ; then
+      echo "\$errstate -eq 0" is true
+   else
+      echo "\$errstate -eq 0" is false
+   fi
+   if [ $gudstate -eq 0 ] ; then
+      echo "\$gudstate -eq 0" is true
+   else
+      echo "\$gudstate -eq 0" is false
+   fi
+}
+
+function echo_error_status {
+  errstate=$?
+  if [ $errstate -ne 0 ] ; then
+    echo " $errstate"
+  fi
+  return $errstate
 }
 
 # PS1='$(basename $(dirname $(pwd)))/$(basename $(pwd)) hg:$(parse_hg_branch) git:$(parse_git_branch) % '
 
-PS1='$(basename $(dirname $(pwd)))/$(basename $(pwd))$(parse_hg_branch)$(parse_git_branch)% '
+BASE_PS1='$(top_two_dirs)$(parse_hg_branch)$(parse_git_branch)'
+
+function prompt_err {
+  if test "$?" -eq 0; then PS1="$BASE_PS1 % "; else PS1="$BASE_PS1 [ERROR#$?] % "; fi
+}
+PROMPT_COMMAND=prompt_err
+
+export P4CONFIG=.fsk_perforce
