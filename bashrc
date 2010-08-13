@@ -18,12 +18,28 @@ fi
 
 ## http://www.jonmaddox.com/2008/03/13/show-your-git-branch-name-in-your-prompt/
 
+function search_parents_for_dotgit {
+  curpath=$(pwd)
+  found_dotgit=0
+  while [ "$curpath" != "/" ] ; do
+    if [ -e "$curpath/.git" ] ; then
+      found_dotgit=1
+      export last_git_path="$curpath/.git"
+      break
+    fi
+    curpath=$(dirname "$curpath")
+  done
+  return $found_dotgit
+}
+
 function parse_git_branch {
-  output=$(git branch --no-color 2>/dev/null)
-  errstate=$?
-  if [ $errstate -eq 0 ] ; then
-    output2=$(echo "$output" | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
-    echo \ \(git:$output2\)
+  if ! search_parents_for_dotgit ; then
+    output=$(git branch --no-color 2>/dev/null)
+    errstate=$?
+    if [ $errstate -eq 0 ] ; then
+      output2=$(echo "$output" | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
+      echo \ \(git:$output2\)
+    fi
   fi
 }
 
@@ -42,6 +58,7 @@ function search_parents_for_dothg {
     if [ -e "$curpath/.hg" ] ; then
       found_dothg=1
       export last_hg_path="$curpath/.hg"
+      break
     fi
     curpath=$(dirname "$curpath")
   done

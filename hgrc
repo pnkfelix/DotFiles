@@ -2,13 +2,15 @@
 username = Felix S. Klock <fklockii@adobe.com>
 ignore = ~/.hgignore
 
-[defaults]
-diff=-p -U 8
+#[defaults]
+#diff=-p -U 8
 
 [diff]
 # Note: makes diff's incompatible with UNIX patch; if that matters,
 # then either use patch -p1 or get rid of this.
 git = True
+showfunc = True
+unified = 8
 
 [alias]
 # show files affected by all applied patches
