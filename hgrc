@@ -30,6 +30,7 @@ children =
 graphlog =
 transplant =
 bookmarks =
+qimportbz = ~/Dev/Mercurial/qimportbz
 
 [paths]
 # default = /Users/fklockii/Dev/tamarin-redux
