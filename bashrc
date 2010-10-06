@@ -74,8 +74,11 @@ function parse_hg_branch_prepass {
 # avoids invoking python
 function parse_hg_branch {
   if ! search_parents_for_dothg ; then
-    if [ -e "$last_hg_path/branch" ] ; then
+    if [ -e "$last_hg_path/branch" ] && [ -s "$last_hg_path/patches/status" ] ; then
+      echo \ \(hg:$(cat "$last_hg_path/branch")\,$(tail -1 "$last_hg_path/patches/status" | sed -e 's/.*://')\)
+    else if [ -e "$last_hg_path/branch" ] ; then
       echo \ \(hg:$(cat "$last_hg_path/branch")\)
+    fi
     fi
   fi
 }
@@ -108,8 +111,13 @@ function echo_error_status {
   return $errstate
 }
 
+function datetime {
+    date +%m-%d:%H:%M:%S
+}
+
 # PS1='$(basename $(dirname $(pwd)))/$(basename $(pwd)) hg:$(parse_hg_branch) git:$(parse_git_branch) % '
 
+# BASE_PS1='$(top_two_dirs)$(parse_hg_branch)$(parse_git_branch) $(datetime)'
 BASE_PS1='$(top_two_dirs)$(parse_hg_branch)$(parse_git_branch)'
 
 function prompt_err {
