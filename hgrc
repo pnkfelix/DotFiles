@@ -31,6 +31,13 @@ graphlog =
 transplant =
 bookmarks =
 qimportbz = ~/Dev/Mercurial/qimportbz
+perfarce  = ~/Dev/Mercurial/perfarce/perfarce.py
+
+[hooks]
+# Prevent "hg pull" if MQ patches are applied
+prechangegroup.mq-no-pull = ! hg qtop > /dev/null 2>&1
+# Prevent "hg push" if MQ patches are applied
+preoutgoing.mq-no-push    = ! hg qtop > /dev/null 2>&1
 
 [paths]
 # default = /Users/fklockii/Dev/tamarin-redux
@@ -40,12 +47,54 @@ dev-tr = /Users/fklockii/Dev/tamarin-redux
 bug-tr = /Users/fklockii/Dev/Bugz/tamarin-redux
 
 [merge-patterns]
-myfile = emacsclient
+myfile = ~/bin/emacsclient-merge
+**.exe = internal:fail
+**.abc = internal:fail
 
 [merge-tools]
 #emacs.executable = /Applications/Emacs.app/Contents/MacOS/Emacs
+emacsclient.executable = /Applications/Emacs.app/Contents/MacOS/bin/emacsclient
 #emacs.args = -q --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
 #emacs.args = -q --eval "(emerge-files-with-ancestor nil \"$local\" \"$other\" \"$base\" \"$output\" nil 'kill-emacs)"
-#emacsclient.args = --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
 #emacsclient.priority = 100
 #emacs.priority       =  99
+
+[perfarce]
+
+## If the keep option is true (this is default) then the Perfarce
+## extension will keep the p4 workarea updated with the current top of
+## tree in p4. If keep is false then the Perfarce extension does not
+## leave files in the p4 workarea unless it is creating a changelist.
+keep = False
+
+## If the submit option is true then Perfarce will automatically
+## submit a changelist when pushing changes to the p4 depot. The
+## default is to create a pending changelist, and let the user review
+## this before submitting, either with p4 submit or hg p4submit.
+submit = False
+
+## If the tags option is true (this is the default) then Perfarce will
+## convert p4 labels into Mercurial tags. If tags is false then p4
+## labels are ignored. This can be used to reduce loading on the p4
+## server.
+tags = False
+
+## If the lowercasepaths option is true then the Perfarce extension
+## forces all directory names received from p4 to lowercase, but
+## leaving filenames unchanged. The default is to preserve directory
+## and file names.
+lowercasepaths = False
+
+## The clientuser option allows for 'cheap' multiuser operation with
+## p4. The option argument is split on the first space into a search
+## regular expression and a replacement string. If the regular
+## expression matches the client spec name of an imported p4
+## changelist then the username for the changelist is changed to the
+## value of the replacement string after it is capitalized. The
+## replacement string can use regex matches to substitute part of the
+## client spec name.An example could be
+##
+##   clientuser = ([a-z]+)\.([a-z-]+)--[a-zA-Z0-9-_.]+ \1 \2 <\1.\2@example.com>
+##
+## which turns "firstname.lastname--my-client-name"
+## into "Firstname Lastname <firstname.lastname@example.com>"
