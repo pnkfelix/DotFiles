@@ -78,9 +78,9 @@
                                (directory-files "."))))
     (if has-proj-file
         ; then
-        (compile "xcodebuild")
+        (compile "time xcodebuild")
       ; else
-      (compile "make"))))
+      (compile "time make"))))
 
 (defun compile-in-compilation-buffer ()
   "Reattempt current compilation."
@@ -114,6 +114,28 @@
 (set-frame-height last-event-frame 120)
 
 (defun frame-80 ()
-  "Resize current frame to be 80 characters."
+  "Resize current frame to be 80 characters width."
   (interactive)
   (set-frame-width (selected-frame) 80))
+(defun frame-163 ()
+  "Resize current frame to be 163 characters width (for two cols)."
+  (interactive)
+  (set-frame-width (selected-frame) 163))
+
+(defun frame-60 ()
+  "Resize current frame to be 60 characters high."
+  (interactive)
+  (set-frame-height (selected-frame) 60))
+(defun frame-43 ()
+  "Resize current frame to be 43 characters high."
+  (interactive)
+  (set-frame-height (selected-frame) 43))
+(defun frame-25 ()
+  "Resize current frame to be 25 characters high."
+  (interactive)
+  (set-frame-height (selected-frame) 25))
+
+(defun search-cpp-access ()
+  "Search forward for C++ access modifier"
+  (interactive)
+  (search-forward-regexp "\\(private\\|protected\\|public\\):"))
