@@ -139,3 +139,15 @@
   "Search forward for C++ access modifier"
   (interactive)
   (search-forward-regexp "\\(private\\|protected\\|public\\):"))
+
+(defconst vc-hg-annotate-re
+  "^[ \t]*\\([0-9]+\\) \\(.\\{30\\}\\)\\(?:\\(: \\)\\|\\(?: +\\(.+\\): \\)\\)")
+
+;(defconst vc-hg-annotate-re
+;  "^[ \t]*\\([0-9]+\\) \\(.\\{30\\}\\)")
+
+(defun vc-hg-annotate-command (file buffer &optional revision)
+  "Execute \"hg annotate\" on FILE, inserting the contents in BUFFER.
+Optional arg REVISION is a revision to annotate from."
+  (vc-hg-command buffer 0 file "annotate" "-d" "-n" ;;"--follow" ;; (follow prints filenames which I do not want)
+                 (when revision (concat "-r" revision))))
