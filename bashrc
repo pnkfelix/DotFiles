@@ -72,12 +72,17 @@ function parse_hg_branch_prepass {
 }
 
 # avoids invoking python
+# FIXME: this is broken because it assumes the file <hgpath>/branch exists,
+# which is often true for my repo's but certainly not true in general.
 function parse_hg_branch {
   if ! search_parents_for_dothg ; then
     if [ -e "$last_hg_path/branch" ] && [ -s "$last_hg_path/patches/status" ] ; then
       echo \ \(hg:$(cat "$last_hg_path/branch")\,$(tail -1 "$last_hg_path/patches/status" | sed -e 's/.*://')\)
     else if [ -e "$last_hg_path/branch" ] ; then
       echo \ \(hg:$(cat "$last_hg_path/branch")\)
+    else if [ -s "$last_hg_path/patches/status" ] ; then
+      echo \ \($(tail -1 "$last_hg_path/patches/status" | sed -e 's/.*://')\)
+    fi
     fi
     fi
   fi
