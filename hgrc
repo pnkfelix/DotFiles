@@ -8,7 +8,7 @@ ignore = ~/.hgignore
 [diff]
 # Note: makes diff's incompatible with UNIX patch; if that matters,
 # then either use patch -p1 or get rid of this.
-git = True
+# git = True
 showfunc = True
 unified = 8
 
@@ -32,6 +32,7 @@ transplant =
 bookmarks =
 qimportbz = ~/Dev/Mercurial/qimportbz
 perfarce  = ~/Dev/Mercurial/perfarce/perfarce.py
+rdiff     = ~/Dev/Mercurial/rdiff/rdiff.py
 
 [hooks]
 # Prevent "hg pull" if MQ patches are applied
@@ -45,6 +46,8 @@ tr = http://hg.mozilla.org/tamarin-redux
 sandbox1 = http://asteam.macromedia.com/hg/users/fklockii/tr-sandbox1/
 dev-tr = /Users/fklockii/Dev/tamarin-redux
 bug-tr = /Users/fklockii/Dev/Bugz/tamarin-redux
+tr-mq = http://asteam.macromedia.com/hg/users/fklockii/tr-patch-queues
+frr-mq = ssh://asteam.macromedia.com/hg/users/fklockii/frr-patch-queues
 
 [merge-patterns]
 myfile = ~/bin/emacsclient-merge
@@ -59,13 +62,17 @@ emacsclient.executable = /Applications/Emacs.app/Contents/MacOS/bin/emacsclient
 #emacsclient.priority = 100
 #emacs.priority       =  99
 
+[qimportbz]
+# patch_format = "bug-%(bugnum)s-%(filename)s"
+patch_format = "%(filename)s"
+
 [perfarce]
 
 ## If the keep option is true (this is default) then the Perfarce
 ## extension will keep the p4 workarea updated with the current top of
 ## tree in p4. If keep is false then the Perfarce extension does not
 ## leave files in the p4 workarea unless it is creating a changelist.
-keep = False
+keep = True
 
 ## If the submit option is true then Perfarce will automatically
 ## submit a changelist when pushing changes to the p4 depot. The
