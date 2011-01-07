@@ -154,3 +154,97 @@
 Optional arg REVISION is a revision to annotate from."
   (vc-hg-command buffer 0 file "annotate" "-d" "-n" ;;"--follow" ;; (follow prints filenames which I do not want)
                  (when revision (concat "-r" revision))))
+
+(require 'comint)
+
+(setq comint-completion-addsuffix '("\\" . " "))
+
+;; Windows support:
+;; "Fix" comint filename path handling.
+(defun comint-match-partial-filename ()
+  "Return the filename at point, or nil if none is found.
+Environment variables are substituted.  See `comint-word'."
+  (let ((filename (comint-word comint-file-name-chars)))
+    ;;FSK:(insert "comint-match-partial-filename.filename: ") (insert filename)
+    (and filename (comint-substitute-in-file-name
+                   (comint-unquote-filename filename)))
+    (and filename (comint-unquote-filename filename))
+    ))
+
+(defun comint-dynamic-complete-as-filename ()
+  "Dynamically complete at point as a filename.
+See `comint-dynamic-complete-filename'.  Returns t if successful."
+  (let* ((completion-ignore-case read-file-name-completion-ignore-case)
+         (completion-ignored-extensions comint-completion-fignore)
+         ;; If we bind this, it breaks remote directory tracking in rlogin.el.
+         ;; I think it was originally bound to solve file completion problems,
+         ;; but subsequent changes may have made this unnecessary.  sm.
+         ;;(file-name-handler-alist nil)
+         (minibuffer-p (window-minibuffer-p (selected-window)))
+         (success t)
+         (dirsuffix (cond ((not comint-completion-addsuffix)
+                           "")
+                          ((not (consp comint-completion-addsuffix))
+                           "/")
+                          (t
+                           (car comint-completion-addsuffix))))
+         (filesuffix (cond ((not comint-completion-addsuffix)
+                            "")
+                           ((not (consp comint-completion-addsuffix))
+                            " ")
+                           (t
+                            (cdr comint-completion-addsuffix))))
+         (filename (comint-match-partial-filename))
+         (filename-beg (if filename (match-beginning 0) (point)))
+         (filename-end (if filename (match-end 0) (point)))
+         (filename (or filename ""))
+         (filedir (file-name-directory filename))
+         (filenondir (file-name-nondirectory filename))
+         (directory (if filedir (comint-directory filedir) default-directory))
+         (completion (file-name-completion filenondir directory)))
+    (cond ((null completion)
+           (if minibuffer-p
+               (minibuffer-message "No completions of %s" filename)
+             (message "No completions of %s" filename))
+           (setq success nil))
+          ((eq completion t)            ; Means already completed "file".
+           (insert filesuffix)
+           (unless minibuffer-p
+             (message "Sole completion")))
+          ((string-equal completion "") ; Means completion on "directory/".
+           (comint-dynamic-list-filename-completions))
+          (t ; Completion string returned.
+           (not (string-equal dirsuffix "\\")) ;; alt predicate
+           (let ((file.v0 (concat (file-name-as-directory directory) completion))
+                 (file.v1 (concat directory dirsuffix completion))
+                 (filedir (if filedir (substring filename 0 (- (length filename) (length filenondir))) filedir))
+                 (file (if filedir (concat filedir completion)
+                         (concat (file-name-as-directory directory)
+                                 completion))))
+             ;; Insert completion.  Note that the completion string
+             ;; may have a different case than what's in the prompt,
+             ;; if read-file-name-completion-ignore-case is non-nil,
+             (delete-region filename-beg filename-end)
+             ;:FSK: (insert "filename: ") (insert filename) (insert " ")
+             (if filedir (insert (comint-quote-filename filedir)))
+             (insert (comint-quote-filename (directory-file-name completion)))
+             (cond ((symbolp (file-name-completion completion directory))
+                    ;; We inserted a unique completion.
+                    (insert (if (file-directory-p file) dirsuffix filesuffix))
+                    (unless minibuffer-p
+                      (message "Completed")))
+                   ((and comint-completion-recexact comint-completion-addsuffix
+                         (string-equal filenondir completion)
+                         (file-exists-p file))
+                    ;; It's not unique, but user wants shortest match.
+                    (insert (if (file-directory-p file) dirsuffix filesuffix))
+                    (unless minibuffer-p
+                      (message "Completed shortest")))
+                   ((or comint-completion-autolist
+                        (string-equal filenondir completion))
+                    ;; It's not unique, list possible completions.
+                    (comint-dynamic-list-filename-completions))
+                   (t
+                    (unless minibuffer-p
+                      (message "Partially completed")))))))
+    success))
