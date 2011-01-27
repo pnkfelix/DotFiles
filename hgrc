@@ -48,6 +48,8 @@ tr-patch-qs = http://asteam.macromedia.com/hg/users/fklockii/tr-patch-queues
 frr-patch-qs = ssh://asteam.macromedia.com/hg/users/fklockii/frr-patch-queues
 dev-tr = /Users/fklockii/Dev/tamarin-redux
 bug-tr = /Users/fklockii/Dev/Bugz/tamarin-redux
+tr-mq = http://asteam.macromedia.com/hg/users/fklockii/tr-patch-queues
+frr-mq = ssh://asteam.macromedia.com/hg/users/fklockii/frr-patch-queues
 
 configfiles-mbp = ssh://fklockii-MacBookPro.local/ConfigFiles
 configfiles-pro = ssh://fklockii-MacPro.local/ConfigFiles
