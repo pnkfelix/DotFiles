@@ -80,7 +80,7 @@
         ; then
         (compile "time xcodebuild")
       ; else
-      (compile "time make"))))
+      (compile "time make -j4"))))
 
 (defun compile-in-compilation-buffer ()
   "Reattempt current compilation."
@@ -139,3 +139,8 @@
   "Search forward for C++ access modifier"
   (interactive)
   (search-forward-regexp "\\(private\\|protected\\|public\\):"))
+
+(defun search-cpp-access-backward ()
+  "Search forward for C++ access modifier"
+  (interactive)
+  (search-backward-regexp "\\(private\\|protected\\|public\\):"))
