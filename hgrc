@@ -1,9 +1,7 @@
 [ui]
 username = Felix S Klock II <fklockii@adobe.com>
 ignore = ~/.hgignore
-
-#[defaults]
-#diff=-p -U 8
+merge = fskmerge
 
 [diff]
 # Note: makes diff's incompatible with UNIX patch; if that matters,
@@ -33,6 +31,15 @@ bookmarks =
 qimportbz = ~/Dev/Mercurial/qimportbz
 perfarce  = ~/Dev/Mercurial/perfarce/perfarce.py
 rdiff     = ~/Dev/Mercurial/rdiff/rdiff.py
+## Added after reading hgx/install.sh
+color =
+convert =
+pbranch = ~/Dev/Mercurial/hg-pbranch/hgext/pbranch.py
+
+[defaults]
+#diff=-p -U 8
+## Added after reading hgx/install.sh
+pdiff = --git
 
 [hooks]
 # Prevent "hg pull" if MQ patches are applied
@@ -67,21 +74,48 @@ binfiles-imac = ssh://fklockii-iMac.local/bin
 binfiles-adbe-osx = /Volumes/Users_F/fklockii/Repositories/Mercurial/ScriptFiles
 
 [merge-patterns]
-#myfile = ~/bin/emacsclient-merge
 **.exe = internal:fail
 **.abc = internal:fail
 
+## Fall back on below if tearing hair out over merge tool usage.
+#**     = internal:fail
+
+# tool-generated files in Tamarin
+build/avmfeatures.py = internal:fail
+core/avmfeatures.h = internal:fail
+core/avmfeatures.cpp = internal:fail
+core/api-versions.as   = internal:fail
+core/api-versions.h    = internal:fail
+core/api-versions.cpp  = internal:fail
+core/api-versions.java = internal:fail
+core/ErrorConstants.as  = internal:fail
+core/ErrorConstants.h   = internal:fail
+core/ErrorConstants.cpp = internal:fail
+generated/builtin.h   = internal:fail
+generated/builtin.cpp = internal:fail
+generated/shell_toplevel.h   = internal:fail
+generated/shell_toplevel.cpp = internal:fail
+utils/opcodes-table.as = internal:fail
+
 [merge-tools]
-#emacs.executable = /Applications/Emacs.app/Contents/MacOS/Emacs
-#emacsclient.executable = /Applications/Emacs.app/Contents/MacOS/bin/emacsclient
+#fskmerge.executable = /Users/fklockii/bin/emacsclient-merge
+fskmerge.executable = /Users/fklockii/bin/emacs-merge
+fskmerge.args = $local $other $base $output
+
+## These may work for you, but they are problematic for my use of OS X
+## Emacs.  And they do not directly carry over to emacsclient.  So I
+## put heavy lifting in a shell script: emacs-merge/emacsclient-merge
+
 #emacs.args = -q --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
 #emacs.args = -q --eval "(emerge-files-with-ancestor nil \"$local\" \"$other\" \"$base\" \"$output\" nil 'kill-emacs)"
-#emacsclient.priority = 100
-#emacs.priority       =  99
+#emacsclient.args = -q --eval "(emerge-files-with-ancestor nil \"$local\" \"$other\" \"$base\" \"$output\" nil)"
 
 [qimportbz]
 # patch_format = "bug-%(bugnum)s-%(filename)s"
 patch_format = "%(filename)s"
+# Deliberately leaving out surrounding '\"'s; o/w they end up in log msg
+# msg_format = Bug %(bugnum)s: %(title)s (%(flags)s)
+msg_format = Bug %(bugnum)s: %(title)s (%(flags)s)\n .\n . attachment %(id)s - %(desc)s \n .\n%(bugdesc)s\n
 
 [perfarce]
 

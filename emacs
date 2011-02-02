@@ -68,6 +68,16 @@
                           (ormap pred (cdr l)))))
         ((null l) nil)))
 
+(defvar system-processor-count
+  (let ((name (system-name)))
+    (cond ((string= name "fklockii-MacBookPro") 2)
+          ((string= name "fklockii-MacPro")     8)
+          ((string= name "FKLOCKII-MACPRO")     8)
+          ((string= name "fklockii-iMac")       4)
+          ((string= name "fklockii-iMac.local") 4)
+          (t 1)))
+  "Absurd guess at the number of host processors; e.g., to guide make invokes.")
+
 (defun compile-including-xcode ()
   "Compile first looking for Xcode support in current directory."
   (interactive)
@@ -78,12 +88,15 @@
                  (string-equal (substring filename (- (length suffix)))
                                suffix))))
          (has-proj-file (ormap dirent-is-xcodeproj
-                               (directory-files "."))))
+                               (directory-files ".")))
+         (core-count-guess (number-to-string system-processor-count))
+         (xcode-invoke "xcodebuild")
+         (make-invoke (concat "make -j" core-count-guess)))
     (if has-proj-file
         ; then
-        (compile "time xcodebuild")
+        (compile (concat "time " xcode-invoke))
       ; else
-      (compile "time make -j4"))))
+      (compile (concat "time " make-invoke)))))
 
 (defun compile-in-compilation-buffer ()
   "Reattempt current compilation."
