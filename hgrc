@@ -54,14 +54,17 @@ frr-mq = ssh://asteam.macromedia.com/hg/users/fklockii/frr-patch-queues
 configfiles-mbp = ssh://fklockii-MacBookPro.local/ConfigFiles
 configfiles-pro = ssh://fklockii-MacPro.local/ConfigFiles
 configfiles-imac = ssh://fklockii-iMac.local/ConfigFiles
+configfiles-adbe-osx = /Volumes/Users_F/fklockii/Repositories/Mercurial/ConfigFiles
 
 dotfiles-mbp = ssh://fklockii-MacBookPro.local/DotFiles
 dotfiles-pro = ssh://fklockii-MacPro.local/DotFiles
 dotfiles-imac = ssh://fklockii-iMac.local/DotFiles
+dotfiles-adbe-osx = /Volumes/Users_F/fklockii/Repositories/Mercurial/DotFiles
 
 binfiles-mbp = ssh://fklockii-MacBookPro.local/bin
 binfiles-pro = ssh://fklockii-MacPro.local/bin
 binfiles-imac = ssh://fklockii-iMac.local/bin
+binfiles-adbe-osx = /Volumes/Users_F/fklockii/Repositories/Mercurial/ScriptFiles
 
 [merge-patterns]
 #myfile = ~/bin/emacsclient-merge
