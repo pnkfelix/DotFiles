@@ -121,10 +121,14 @@ function datetime {
     date +%m-%d:%H:%M:%S
 }
 
+function justtime {
+    date +%H:%M:%S
+}
+
 # PS1='$(basename $(dirname $(pwd)))/$(basename $(pwd)) hg:$(parse_hg_branch) git:$(parse_git_branch) % '
 
 # BASE_PS1='$(top_two_dirs)$(parse_hg_branch)$(parse_git_branch) $(datetime)'
-BASE_PS1='$(top_two_dirs)$(parse_hg_branch)$(parse_git_branch)'
+BASE_PS1='$(justtime) $(top_two_dirs)$(parse_hg_branch)$(parse_git_branch)'
 
 function prompt_err {
   if test "$?" -eq 0; then PS1="$BASE_PS1 % "; else PS1="$BASE_PS1 [ERROR#$?] % "; fi
