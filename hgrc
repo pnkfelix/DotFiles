@@ -28,9 +28,9 @@ children =
 graphlog =
 transplant =
 bookmarks =
-qimportbz = ~/Dev/Mercurial/qimportbz
-perfarce  = ~/Dev/Mercurial/perfarce/perfarce.py
-rdiff     = ~/Dev/Mercurial/rdiff/rdiff.py
+qimportbz = %USERPROFILE%\Desktop\Dev\Mercurial\qimportbz
+perfarce  = %USERPROFILE%\Desktop\Dev\Mercurial\perfarce\perfarce.py
+#rdiff     = %USERPROFILE%\Desktop\Dev\Mercurial\rdiff\rdiff.py
 ## Added after reading hgx/install.sh
 color =
 convert =
@@ -43,9 +43,9 @@ pdiff = --git
 
 [hooks]
 # Prevent "hg pull" if MQ patches are applied
-prechangegroup.mq-no-pull = ! hg qtop > /dev/null 2>&1
+#prechangegroup.mq-no-pull = ! hg qtop > /dev/null 2>&1
 # Prevent "hg push" if MQ patches are applied
-preoutgoing.mq-no-push    = ! hg qtop > /dev/null 2>&1
+#preoutgoing.mq-no-push    = ! hg qtop > /dev/null 2>&1
 
 [paths]
 # default = /Users/fklockii/Dev/tamarin-redux

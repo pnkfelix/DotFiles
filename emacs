@@ -3,6 +3,7 @@
 (setq load-path (cons "~/ConfigFiles/Elisp" load-path))
 (require 'whitespace)
 (require 'uniquify)
+(require 'comint) ; so that I can override some its fcns below.
 
 ;; too slow
 ;(require 'js2-mode)
@@ -189,7 +190,8 @@ Optional arg REVISION is a revision to annotate from."
 ;; All of the below is for Windows only; want to conditionally run it
 (cond
  ((eq window-system 'w32)
-  (require 'comint)
+
+  ;; comint package is required above
 
   (setq comint-completion-addsuffix '("\\" . " "))
 
