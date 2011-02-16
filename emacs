@@ -78,6 +78,19 @@
           (t 1)))
   "Absurd guess at the number of host processors; e.g., to guide make invokes.")
 
+(defvar ASCPATH
+  (let ((name (system-name)))
+    (cond
+     ;;((string= name "fklockii-MacBookPro") 2)
+     ;;((string= name "fklockii-MacPro")     8)
+     ;;((string= name "FKLOCKII-MACPRO")     8)
+     ((or (string= name "fklockii-iMac")
+          (string= name "fklockii-iMac.local"))
+      "/Users/fklockii/Dev/FlashPFarce/tools/asc/asc.jar"))))
+
+;; Perhaps predicate on whether ASC is already set in environment?
+(setenv "ASC" ASCPATH)
+
 (defun compile-including-xcode ()
   "Compile first looking for Xcode support in current directory."
   (interactive)
