@@ -108,6 +108,8 @@ msg_format = Bug %(bugnum)s: %(title)s (%(flags)s)\n .\n . attachment %(id)s - %
 ## extension will keep the p4 workarea updated with the current top of
 ## tree in p4. If keep is false then the Perfarce extension does not
 ## leave files in the p4 workarea unless it is creating a changelist.
+# keep = False
+# Temporarily turning on to see if it speeds up checkout of MobileMain
 keep = True
 
 ## If the submit option is true then Perfarce will automatically
