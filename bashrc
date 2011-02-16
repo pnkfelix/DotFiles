@@ -89,9 +89,9 @@ function parse_hg_branch {
 }
 
 function top_two_dirs {
-   CWD=$(pwd)
-   STRIP=$(dirname "$CWD")
-   echo $(basename "$STRIP")/$(basename "$CWD")
+   CWD="$(pwd)"
+   DIR=$(dirname "$CWD")
+   echo $(basename "$DIR")/$(basename "$CWD")
 }
 
 function check_test {
