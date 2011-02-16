@@ -1,3 +1,4 @@
+[extensions]
 progress =
 # graphviz = ~/Dev/Mercurial/graphviz.py
 hgk =

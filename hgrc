@@ -18,7 +18,6 @@ qpdiff = diff --rev qparent
 # show revision history since qparent (last pulled revision)
 qlog = log -r qtip:qparent
 
-[extensions]
 %include .hgrc-extensions
 
 [defaults]
