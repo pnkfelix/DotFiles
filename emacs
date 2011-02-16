@@ -71,11 +71,12 @@
 
 (defvar system-processor-count
   (let ((name (system-name)))
-    (cond ((string= name "fklockii-MacBookPro") 2)
-          ((string= name "fklockii-MacPro")     8)
-          ((string= name "FKLOCKII-MACPRO")     8)
-          ((string= name "fklockii-iMac")       4)
-          ((string= name "fklockii-iMac.local") 4)
+    (cond ((string= name "fklockii-MacBookPro")   2)
+          ((string= name "fklockii-MacPro")       8)
+          ((string= name "fklockii-MacPro.local") 8)
+          ((string= name "FKLOCKII-MACPRO")       8)
+          ((string= name "fklockii-iMac")         4)
+          ((string= name "fklockii-iMac.local")   4)
           (t 1)))
   "Absurd guess at the number of host processors; e.g., to guide make invokes.")
 
