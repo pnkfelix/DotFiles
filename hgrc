@@ -19,22 +19,7 @@ qpdiff = diff --rev qparent
 qlog = log -r qtip:qparent
 
 [extensions]
-progress =
-# graphviz = ~/Dev/Mercurial/graphviz.py
-hgk =
-hgext.mq =
-rebase =
-children =
-graphlog =
-transplant =
-bookmarks =
-qimportbz = %USERPROFILE%\Desktop\Dev\Mercurial\qimportbz
-perfarce  = %USERPROFILE%\Desktop\Dev\Mercurial\perfarce\perfarce.py
-#rdiff     = %USERPROFILE%\Desktop\Dev\Mercurial\rdiff\rdiff.py
-## Added after reading hgx/install.sh
-color =
-convert =
-pbranch = ~/Dev/Mercurial/hg-pbranch/hgext/pbranch.py
+%include .hgrc-extensions
 
 [defaults]
 #diff=-p -U 8
