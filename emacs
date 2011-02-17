@@ -74,7 +74,7 @@
           ((string= name "fklockii-MacPro")     8)
           ((string= name "FKLOCKII-MACPRO")     8)
           ((string= name "fklockii-iMac")       4)
-          (else 1)))
+          (t 1)))
   "Absurd guess at the number of host processors; e.g., to guide make invokes.")
 
 (defun compile-including-xcode ()
@@ -167,6 +167,8 @@ Optional arg REVISION is a revision to annotate from."
   (vc-hg-command buffer 0 file "annotate" "-d" "-n" ;;"--follow" ;; (follow prints filenames which I do not want)
                  (when revision (concat "-r" revision))))
 
+(cond
+ (nil
 (require 'comint)
 
 (setq comint-completion-addsuffix '("\\" . " "))
@@ -260,3 +262,4 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
                     (unless minibuffer-p
                       (message "Partially completed")))))))
     success))
+))
