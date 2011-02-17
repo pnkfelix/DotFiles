@@ -43,9 +43,9 @@ pdiff = --git
 
 [hooks]
 # Prevent "hg pull" if MQ patches are applied
-prechangegroup.mq-no-pull = ! hg qtop > /dev/null 2>&1
+#prechangegroup.mq-no-pull = ! hg qtop > /dev/null 2>&1
 # Prevent "hg push" if MQ patches are applied
-preoutgoing.mq-no-push    = ! hg qtop > /dev/null 2>&1
+#preoutgoing.mq-no-push    = ! hg qtop > /dev/null 2>&1
 
 [paths]
 # default = /Users/fklockii/Dev/tamarin-redux
