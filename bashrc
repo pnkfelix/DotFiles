@@ -122,7 +122,7 @@ function datetime {
 }
 
 function justtime {
-    date +%H:%M:%S
+    date +%H-%M-%S
 }
 
 # PS1='$(basename $(dirname $(pwd)))/$(basename $(pwd)) hg:$(parse_hg_branch) git:$(parse_git_branch) % '
