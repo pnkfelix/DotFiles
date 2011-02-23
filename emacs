@@ -45,7 +45,7 @@
 (require 'server)
 (when (not (server-running-p))
   (server-start)
-  (setenv "EDITOR" "emacsclient"))
+  (setenv "EDITOR" "~/bin/emacsclient"))
 
 ;; EmacsWiki explains that this fixes whitespace character
 ;; rendering for Fedora and OS X 
