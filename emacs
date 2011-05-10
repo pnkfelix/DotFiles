@@ -1,5 +1,8 @@
 ;; -*- mode: lisp; indent-tabs-mode: nil -*-
 
+;; Coding system stuff is discussed in Info node
+;; Interational .. Coding Systems
+
 (setq load-path (cons "~/ConfigFiles/Elisp" load-path))
 (require 'whitespace)
 (require 'uniquify)
@@ -9,10 +12,10 @@
 (require 'javascript-mode)
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(comint-completion-fignore nil)
  '(completion-ignored-extensions (quote (".svn/" "CVS/" ".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".dvi" ".fmt" ".tfm" ".pdf" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".fasl" ".ufsl" ".fsl" ".dxl" ".pfsl" ".dfsl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" ".abc")))
  '(debug-on-error t)
@@ -20,16 +23,17 @@
  '(line-move-visual nil)
  '(truncate-partial-width-windows nil)
  '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
- '(whitespace-style (quote (trailing tabs space-before-tab empty))))
+ '(whitespace-style (quote (face trailing tabs space-before-tab empty))))
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(diff-added ((t (:foreground "DarkGreen"))) 'now)
- '(diff-removed ((t (:foreground "DarkRed"))) 'now)
- '(whitespace-line ((t (:background "alice blue")))))
-
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(diff-added ((t (:foreground "DarkGreen"))) t)
+ '(diff-removed ((t (:foreground "DarkRed"))) t)
+ '(whitespace-line ((t (:background "alice blue"))))
+ '(whitespace-tab ((t (:background "light goldenrod" :foreground "lightgray")))))
+
 (global-whitespace-mode 1)
 (column-number-mode 1)
 (tool-bar-mode -1)
@@ -114,11 +118,17 @@
 (defun compile-in-compilation-buffer ()
   "Reattempt current compilation."
   (interactive)
-  (switch-to-buffer "*compilation*")
+  (if (not (string-match "*compil*" (buffer-name)))
+      (switch-to-buffer "*compilation*"))
   (compile-including-xcode))
 
 ;; (global-set-key (kbd "<f5>") 'compile-including-xcode)
 (global-set-key (kbd "<f5>") 'compile-in-compilation-buffer)
+
+(defun set-indent-tabs-mode ()
+  "Toggle setting for indent-tabs-mode variable."
+  (interactive)
+  (setq indent-tabs-mode (not indent-tabs-mode)))
 
 ;; Disable WordWrap (Aquamacs) if present
 (if (boundp 'global-visual-line-mode)
