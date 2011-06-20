@@ -129,9 +129,9 @@ tags = False
 ## forces all directory names received from p4 to lowercase, but
 ## leaving filenames unchanged. The default is to preserve directory
 ## and file names.
-# lowercasepaths = False
 
-# FSK I had lowercasepaths = False
+# FSK had played with varying lowercasepaths settings
+# FSK (True on some machines, False on others)
 # FSK but hgx says to use ignorecase = True
 # FSK and that (below) might subsume lowercasepaths
 ignorecase = True
