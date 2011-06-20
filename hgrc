@@ -99,7 +99,9 @@ fskmerge.args = $local $other $base $output
 patch_format = "%(filename)s"
 # Deliberately leaving out surrounding '\"'s; o/w they end up in log msg
 # msg_format = Bug %(bugnum)s: %(title)s (%(flags)s)
-msg_format = Bug %(bugnum)s: %(title)s (%(flags)s)\n .\n . attachment %(id)s - %(desc)s \n .\n%(bugdesc)s\n
+msg_format = Bug %(bugnum)s: %(desc)s (%(flags)s)
+ .
+ %(bugdesc)s
 
 [perfarce]
 
@@ -127,7 +129,12 @@ tags = False
 ## forces all directory names received from p4 to lowercase, but
 ## leaving filenames unchanged. The default is to preserve directory
 ## and file names.
-lowercasepaths = False
+# lowercasepaths = False
+
+# FSK I had lowercasepaths = False
+# FSK but hgx says to use ignorecase = True
+# FSK and that (below) might subsume lowercasepaths
+ignorecase = True
 
 ## The clientuser option allows for 'cheap' multiuser operation with
 ## p4. The option argument is split on the first space into a search
