@@ -199,8 +199,8 @@
   (mapcar (lambda (c) (mapconcat 'identity c " "))
           (list-combinations args)))
 
-(defun xcodebuild (archs cfg tgt)
-  "Compile via xcodebuild but prompt user for ARCHS, configuration and target."
+(defun xcodebuild (archs cfg tgt cmds)
+  "Compile via xcodebuild prompting for ARCHS, config, target and commands."
   ; (interactive "sARCHS: \nsconfiguration: \nstarget: ")
   (interactive (progn
                  ;; Can fall back on this if necessary; it prints output to window
@@ -214,14 +214,18 @@
                                        (no-empties (string-combinations archs)))
                       (completing-read (format "configuration %s: " configs)
                                        (no-empties configs))
-                      (completing-read "target: " (no-empties targets)))))))
+                      (completing-read "target: " (no-empties targets))
+                      (completing-read "commands (build): "
+                                       (list "build" "clean" "clean build"))
+                      )))))
   (let ((archs-arg (concat " ONLY_ACTIVE_ARCH=NO ARCHS=\"" archs "\""))
         (cfg-arg (concat " -configuration " cfg))
         (tgt-arg (concat " -target " tgt))
         (tmp-file (make-temp-file "xcodebuild" nil ".log")))
-    (let ((cmd (concat "time ( xcodebuild" archs-arg cfg-arg tgt-arg " build "
-                       "| tee " tmp-file
-                       "| grep --before-context=5 ':' "
+    (let ((cmd (concat "time ( xcodebuild" archs-arg cfg-arg tgt-arg
+                       " " cmds
+                       " | tee " tmp-file
+                       " | grep --before-context=5 ':' "
                        "&& tail -5 " tmp-file " )")))
       (compile cmd))))
 
