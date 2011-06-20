@@ -11,7 +11,7 @@
 ;; too slow
 ;(require 'js2-mode)
 (require 'javascript-mode)
-(require 'actionscript-mode)
+;(require 'actionscript-mode)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -218,7 +218,10 @@
   (let ((archs-arg (concat " ONLY_ACTIVE_ARCH=NO ARCHS=\"" archs "\""))
         (cfg-arg (concat " -configuration " cfg))
         (tgt-arg (concat " -target " tgt)))
-    (let ((cmd (concat "time xcodebuild" archs-arg cfg-arg tgt-arg " build")))
+    (let ((cmd (concat "time ( xcodebuild" archs-arg cfg-arg tgt-arg " build "
+                       "| tee /tmp/xcodebuild.log "
+                       "| grep --before-context=5 ':' "
+                       "&& tail -5 /tmp/xcodebuild.log )")))
       (compile cmd))))
 
 (defun compile-including-xcode ()
