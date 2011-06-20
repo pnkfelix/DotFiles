@@ -217,11 +217,12 @@
                       (completing-read "target: " (no-empties targets)))))))
   (let ((archs-arg (concat " ONLY_ACTIVE_ARCH=NO ARCHS=\"" archs "\""))
         (cfg-arg (concat " -configuration " cfg))
-        (tgt-arg (concat " -target " tgt)))
+        (tgt-arg (concat " -target " tgt))
+        (tmp-file (make-temp-file "xcodebuild" nil ".log")))
     (let ((cmd (concat "time ( xcodebuild" archs-arg cfg-arg tgt-arg " build "
-                       "| tee /tmp/xcodebuild.log "
+                       "| tee " tmp-file
                        "| grep --before-context=5 ':' "
-                       "&& tail -5 /tmp/xcodebuild.log )")))
+                       "&& tail -5 " tmp-file " )")))
       (compile cmd))))
 
 (defun compile-including-xcode ()
