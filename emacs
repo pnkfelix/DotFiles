@@ -75,6 +75,9 @@
         ((null l) nil)))
 
 (defvar system-processor-count
+  (read (car (process-lines "sysctl" "-n" "hw.ncpu"))))
+
+(defvar system-processor-count-old
   (let ((name (system-name)))
     (cond ((string= name "fklockii-MacBookPro")   2)
           ((string= name "fklockii-MacPro")       8)
