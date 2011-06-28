@@ -106,10 +106,10 @@
   (interactive)
   (shell-command "xcodebuild -help ; xcodebuild -list"))
 
-(defun xcodebuild-list ()
+(defun xcodebuild-list (proj)
   "Returns Xcode target/configuration lines for project in current directory."
-  (interactive)
-  (process-lines "xcodebuild" "-list"))
+  (interactive (list (call-interactively 'determine-xcode-project)))
+  (process-lines "xcodebuild" "-project" proj "-list"))
 
 ;; until-drop : String [Listof String] -> [Listof String]
 ;; (until-drop c (list aa bb cc dd ee ff)) => (dd ee ff)
@@ -202,17 +202,37 @@
   (mapcar (lambda (c) (mapconcat 'identity c " "))
           (list-combinations args)))
 
-(defun xcodebuild (archs cfg tgt cmds)
+(defun xcode-project-files ()
+  (interactive)
+  (let* ((suffix ".xcodeproj")
+         (dirent-is-xcodeproj
+          (lambda (filename)
+            (and (> (length filename) (length suffix))
+                 (string-equal (substring filename (- (length suffix)))
+                               suffix)))))
+    (ormap dirent-is-xcodeproj (directory-files "."))))
+
+(defun determine-xcode-project (proj-files)
+  "Determines, interactively if necessary, which .xcodeproj to use to build."
+  (interactive (list (xcode-project-files)))
+  (if (null (cdr proj-files))
+      (car proj-files)
+    (completing-read "project: " proj-files)))
+
+
+(defun xcodebuild (proj archs cfg tgt cmds)
   "Compile via xcodebuild prompting for ARCHS, config, target and commands."
   ; (interactive "sARCHS: \nsconfiguration: \nstarget: ")
   (interactive (progn
                  ;; Can fall back on this if necessary; it prints output to window
                  ;; (xcodebuild-list-shell)
-                 (let ((xcode-lines (xcodebuild-list)))
+                 (let* ((proj (call-interactively 'determine-xcode-project))
+                        (xcode-lines (xcodebuild-list proj)))
                    (let ((archs '("x86_64" "i386"))
                          (configs (no-empties (extract-xcode-configs xcode-lines)))
                          (targets (no-empties (extract-xcode-targets xcode-lines))))
                      (list
+                      proj
                       (completing-read (format "ARCHS %s: " archs)
                                        (no-empties (string-combinations archs)))
                       (completing-read (format "configuration %s: " configs)
@@ -221,11 +241,16 @@
                       (completing-read "commands (build): "
                                        (list "build" "clean" "clean build"))
                       )))))
+  (xcodebuild-impl proj archs cfg tgt cmds))
+
+(defun xcodebuild-impl (proj archs cfg tgt cmds)
   (let ((archs-arg (concat " ONLY_ACTIVE_ARCH=NO ARCHS=\"" archs "\""))
         (cfg-arg (concat " -configuration " cfg))
         (tgt-arg (concat " -target " tgt))
         (tmp-file (make-temp-file "xcodebuild" nil ".log")))
-    (let ((cmd (concat "time ( xcodebuild" archs-arg cfg-arg tgt-arg
+    (let ((cmd (concat "time ( xcodebuild"
+                       " -project " proj
+                       archs-arg cfg-arg tgt-arg
                        " " cmds
                        " | tee " tmp-file
                        " | grep --before-context=5 ':' "
@@ -235,16 +260,8 @@
 (defun compile-including-xcode ()
   "Compile first looking for Xcode support in current directory."
   (interactive)
-  (let* ((suffix ".xcodeproj")
-         (dirent-is-xcodeproj
-          (lambda (filename)
-            (and (> (length filename) (length suffix))
-                 (string-equal (substring filename (- (length suffix)))
-                               suffix))))
-         (has-proj-file (ormap dirent-is-xcodeproj
-                               (directory-files ".")))
+  (let* ((has-proj-file (xcode-project-files))
          (core-count-guess (number-to-string system-processor-count))
-         (xcode-invoke "xcodebuild")
          (make-invoke (concat "make -j" core-count-guess)))
     (if has-proj-file
         ; then
