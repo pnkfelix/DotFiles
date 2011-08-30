@@ -11,6 +11,7 @@
 ;; too slow
 ;(require 'js2-mode)
 (require 'javascript-mode)
+;; too ugly?  and besides, I don't have it on all my machines (yet).
 ;(require 'actionscript-mode)
 
 (custom-set-variables
