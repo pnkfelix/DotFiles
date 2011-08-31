@@ -253,7 +253,7 @@
                        archs-arg cfg-arg tgt-arg
                        " " cmds
                        " | tee " tmp-file
-                       " | grep --before-context=5 ':' "
+                       " | grep --before-context=5 -e '^[^\"]*:' "
                        "&& tail -5 " tmp-file " )")))
       (compile cmd))))
 
@@ -458,3 +458,7 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
                         (message "Partially completed")))))))
       success))
   ))
+
+(defun kill-emacs-signal-error ()
+  (interactive)
+  (kill-emacs 1))
