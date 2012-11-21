@@ -308,7 +308,10 @@
 (setq font-lock-maximum-decoration
       '((c-mode . 2) (c++-mode . 2)))
 
-(set-frame-height last-event-frame 120)
+(require 'maxframe)
+
+;(set-frame-height last-event-frame 120)
+(set-frame-height last-event-frame 50)
 
 (defun frame-80 ()
   "Resize current frame to be 80 characters width."
