@@ -463,3 +463,16 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 (defun kill-emacs-signal-error ()
   (interactive)
   (kill-emacs 1))
+
+(defun insert-octothorpe ()
+  (interactive)
+  (insert-char ?# 1))
+
+;; This is a way to attempt to get the effect of M-3 expressing "#"
+;; but it will not work in the context of interactive search.
+;; (See also: http://ergoemacs.org/emacs/emacs_key-translation-map.html
+;; http://www.masteringemacs.org/articles/2011/02/08/mastering-key-bindings-emacs/
+; (global-set-key (kbd "M-3") 'insert-octothorpe)
+; (global-set-key (kbd "s-3") 'insert-octothorpe)
+
+(keyboard-translate ?£ ?#)
