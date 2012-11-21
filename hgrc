@@ -3,6 +3,9 @@ username = Felix S Klock II <fklockii@adobe.com>
 ignore = ~/.hgignore
 merge = fskmerge
 
+[trusted]
+users = pnkfelix, fklockii, fklock
+
 [diff]
 # Note: makes diff's incompatible with UNIX patch; if that matters,
 # then either use patch -p1 or get rid of this.
