@@ -3,7 +3,7 @@
 ;; Coding system stuff is discussed in Info node
 ;; Interational .. Coding Systems
 
-(setq load-path (cons "~/ConfigFiles/Elisp" load-path))
+(add-to-list 'load-path "~/ConfigFiles/Elisp")
 (require 'whitespace)
 (require 'uniquify)
 (require 'comint) ; so that I can override some its fcns below.
@@ -68,12 +68,19 @@
       (set-frame-parameter nil 'fullscreen 'fullboth)
       (set-frame-parameter nil 'fullscreen 'nil)))
 
-(defun ormap (pred l)
+'(defun ormap (pred l)
   (cond ((consp l) (cond ((funcall pred (car l))
                           (cons (car l) (ormap pred (cdr l))))
                          (t
                           (ormap pred (cdr l)))))
         ((null l) nil)))
+
+(defun ormap (pred lst)
+  (let (accum)
+    (dolist (element lst accum)
+      (cond ((funcall pred element)
+             (setq accum (cons element accum)))))
+    (reverse accum)))
 
 (defvar system-processor-count
   (read (car (process-lines "sysctl" "-n" "hw.ncpu"))))
@@ -479,3 +486,40 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 ; (global-set-key (kbd "s-3") 'insert-octothorpe)
 
 (keyboard-translate ?£ ?#)
+
+(require 'etags-select)
+(global-set-key "\M-?" 'etags-select-find-tag-at-point)
+(global-set-key "\M-." 'etags-select-find-tag)
+
+(add-to-list 'load-path "~/ConfigFiles/Elisp/ack-el")
+(require 'ack)
+(autoload 'pcomplete/ack "pcmpl-ack")
+(autoload 'pcomplete/ack-grep "pcmpl-ack")
+
+(add-to-list 'load-path "~/ConfigFiles/Elisp/exec-path-from-shell")
+(require 'exec-path-from-shell)
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
+
+;; See: http://www.nongnu.org/color-theme/
+(add-to-list 'load-path "~/ConfigFiles/Elisp/color-theme-6.6.0")
+(require 'color-theme)
+;; See: http://ethanschoonover.com/solarized
+(add-to-list 'custom-theme-load-path "~/ConfigFiles/Elisp/emacs-color-theme-solarized")
+(load-theme 'solarized-dark t) ; or: (load-theme 'solarized-light t)
+
+;; http://code.google.com/p/js2-mode/wiki/InstallationInstructions
+(autoload 'js2-mode "js2-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+
+;; See http://js-comint-el.sourceforge.net/
+(require 'js-comint)
+(setq inferior-js-program-command
+      "/Users/fklock/Dev/Mozilla/iontrail/objdir-js/js")
+(add-hook 'js2-mode-hook '(lambda ()
+                            (local-set-key "\C-x\C-e" 'js-send-last-sexp)
+                            (local-set-key "\C-\M-x"  'js-send-last-sexp-and-go)
+                            (local-set-key "\C-cb"    'js-send-buffer)
+                            (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
+                            (local-set-key "\C-cl"    'js-load-file-and-go)
+                            ))
