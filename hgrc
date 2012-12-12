@@ -1,0 +1,154 @@
+[ui]
+username = Felix S Klock II <fklockii@adobe.com>
+ignore = ~/.hgignore
+merge = fskmerge
+
+[trusted]
+users = pnkfelix, fklockii, fklock
+
+[diff]
+# Note: makes diff's incompatible with UNIX patch; if that matters,
+# then either use patch -p1 or get rid of this.
+git = True
+showfunc = True
+unified = 8
+
+[alias]
+# show files affected by all applied patches
+qpstatus = status --rev qparent
+# show diff for all applied patches
+qpdiff = diff --rev qparent
+# show revision history since qparent (last pulled revision)
+qlog = log -r qtip:qparent
+
+%include .hgrc-extensions
+
+[defaults]
+#diff=-p -U 8
+## Added after reading hgx/install.sh
+pdiff = --git
+
+[hooks]
+# Prevent "hg pull" if MQ patches are applied
+#prechangegroup.mq-no-pull = ! hg qtop > /dev/null 2>&1
+# Prevent "hg push" if MQ patches are applied
+#preoutgoing.mq-no-push    = ! hg qtop > /dev/null 2>&1
+
+[paths]
+# default = /Users/fklockii/Dev/tamarin-redux
+tr = http://hg.mozilla.org/tamarin-redux
+sandbox1 = http://asteam.macromedia.com/hg/users/fklockii/tr-sandbox1/
+tr-patch-qs = http://asteam.macromedia.com/hg/users/fklockii/tr-patch-queues
+frr-patch-qs = ssh://asteam.macromedia.com/hg/users/fklockii/frr-patch-queues
+dev-tr = /Users/fklockii/Dev/tamarin-redux
+bug-tr = /Users/fklockii/Dev/Bugz/tamarin-redux
+tr-mq = http://asteam.macromedia.com/hg/users/fklockii/tr-patch-queues
+frr-mq = ssh://asteam.macromedia.com/hg/users/fklockii/frr-patch-queues
+
+configfiles-mbp = ssh://fklockii-MacBookPro.local/ConfigFiles
+configfiles-pro = ssh://fklockii-MacPro.local/ConfigFiles
+configfiles-imac = ssh://fklockii-iMac.local/ConfigFiles
+configfiles-adbe-osx = /Volumes/Users_F/fklockii/Repositories/Mercurial/ConfigFiles
+
+dotfiles-mbp = ssh://fklockii-MacBookPro.local/DotFiles
+dotfiles-pro = ssh://fklockii-MacPro.local/DotFiles
+dotfiles-imac = ssh://fklockii-iMac.local/DotFiles
+dotfiles-adbe-osx = /Volumes/Users_F/fklockii/Repositories/Mercurial/DotFiles
+
+binfiles-mbp = ssh://fklockii-MacBookPro.local/bin
+binfiles-pro = ssh://fklockii-MacPro.local/bin
+binfiles-imac = ssh://fklockii-iMac.local/bin
+binfiles-adbe-osx = /Volumes/Users_F/fklockii/Repositories/Mercurial/ScriptFiles
+
+[merge-patterns]
+**.exe = internal:fail
+**.abc = internal:fail
+
+## Fall back on below if tearing hair out over merge tool usage.
+#**     = internal:fail
+
+# tool-generated files in Tamarin
+build/avmfeatures.py = internal:fail
+core/avmfeatures.h = internal:fail
+core/avmfeatures.cpp = internal:fail
+core/api-versions.as   = internal:fail
+core/api-versions.h    = internal:fail
+core/api-versions.cpp  = internal:fail
+core/api-versions.java = internal:fail
+core/ErrorConstants.as  = internal:fail
+core/ErrorConstants.h   = internal:fail
+core/ErrorConstants.cpp = internal:fail
+generated/builtin.h   = internal:fail
+generated/builtin.cpp = internal:fail
+generated/shell_toplevel.h   = internal:fail
+generated/shell_toplevel.cpp = internal:fail
+utils/opcodes-table.as = internal:fail
+
+[merge-tools]
+#fskmerge.executable = /Users/fklockii/bin/emacsclient-merge
+fskmerge.executable = /Users/fklockii/bin/emacs-merge
+fskmerge.args = $local $other $base $output
+
+## These may work for you, but they are problematic for my use of OS X
+## Emacs.  And they do not directly carry over to emacsclient.  So I
+## put heavy lifting in a shell script: emacs-merge/emacsclient-merge
+
+#emacs.args = -q --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
+#emacs.args = -q --eval "(emerge-files-with-ancestor nil \"$local\" \"$other\" \"$base\" \"$output\" nil 'kill-emacs)"
+#emacsclient.args = -q --eval "(emerge-files-with-ancestor nil \"$local\" \"$other\" \"$base\" \"$output\" nil)"
+
+[qimportbz]
+# patch_format = "bug-%(bugnum)s-%(filename)s"
+patch_format = "%(filename)s"
+# Deliberately leaving out surrounding '\"'s; o/w they end up in log msg
+# msg_format = Bug %(bugnum)s: %(title)s (%(flags)s)
+msg_format = Bug %(bugnum)s: %(desc)s (%(flags)s)
+ .
+ %(bugdesc)s
+
+[perfarce]
+
+## If the keep option is true (this is default) then the Perfarce
+## extension will keep the p4 workarea updated with the current top of
+## tree in p4. If keep is false then the Perfarce extension does not
+## leave files in the p4 workarea unless it is creating a changelist.
+# keep = False
+# Temporarily turning on to see if it speeds up checkout of MobileMain
+keep = True
+
+## If the submit option is true then Perfarce will automatically
+## submit a changelist when pushing changes to the p4 depot. The
+## default is to create a pending changelist, and let the user review
+## this before submitting, either with p4 submit or hg p4submit.
+submit = False
+
+## If the tags option is true (this is the default) then Perfarce will
+## convert p4 labels into Mercurial tags. If tags is false then p4
+## labels are ignored. This can be used to reduce loading on the p4
+## server.
+tags = False
+
+## If the lowercasepaths option is true then the Perfarce extension
+## forces all directory names received from p4 to lowercase, but
+## leaving filenames unchanged. The default is to preserve directory
+## and file names.
+
+# FSK had played with varying lowercasepaths settings
+# FSK (True on some machines, False on others)
+# FSK but hgx says to use ignorecase = True
+# FSK and that (below) might subsume lowercasepaths
+ignorecase = True
+
+## The clientuser option allows for 'cheap' multiuser operation with
+## p4. The option argument is split on the first space into a search
+## regular expression and a replacement string. If the regular
+## expression matches the client spec name of an imported p4
+## changelist then the username for the changelist is changed to the
+## value of the replacement string after it is capitalized. The
+## replacement string can use regex matches to substitute part of the
+## client spec name.An example could be
+##
+##   clientuser = ([a-z]+)\.([a-z-]+)--[a-zA-Z0-9-_.]+ \1 \2 <\1.\2@example.com>
+##
+## which turns "firstname.lastname--my-client-name"
+## into "Firstname Lastname <firstname.lastname@example.com>"

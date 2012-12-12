@@ -1,0 +1,14 @@
+# test comment
+P4PORT=flashfarm.corp.adobe.com:1666
+
+# Settings that a config file can have:
+# P4CHARSET
+# P4COMMANDCHARSET
+# P4CLIENT
+# P4EDITOR
+# P4HOST
+# P4LANGUAGE
+# P4MERGE
+# P4PASSWD
+# P4PORT
+# P4USER

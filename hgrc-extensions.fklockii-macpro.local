@@ -1,0 +1,18 @@
+[extensions]
+progress =
+# graphviz = ~/ConfigFiles/Mercurial/graphviz.py
+hgk =
+hgext.mq =
+rebase =
+children =
+graphlog =
+transplant =
+bookmarks =
+qimportbz = ~/ConfigFiles/Mercurial/qimportbz
+perfarce  = ~/ConfigFiles/Mercurial/perfarce/perfarce.py
+rdiff     = ~/ConfigFiles/Mercurial/rdiff/rdiff.py
+## Added after reading hgx/install.sh
+color =
+convert =
+pbranch = ~/ConfigFiles/Mercurial/hg-pbranch/hgext/pbranch.py
+#bzexport = ~/ConfigFiles/Mercurial/bzexport/bzexport.py
