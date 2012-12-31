@@ -328,6 +328,10 @@
   "Resize current frame to be 163 characters width (for two cols)."
   (interactive)
   (set-frame-width (selected-frame) 163))
+(defun frame-246 ()
+  "Resize current frame to be 246 characters width (for three cols)."
+  (interactive)
+  (set-frame-width (selected-frame) 246))
 
 (defun frame-60 ()
   "Resize current frame to be 60 characters high."
