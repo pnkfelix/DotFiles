@@ -20,9 +20,13 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(comint-completion-fignore nil)
+ '(comint-password-prompt-regexp "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|Repeat\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +\\)\\(?:Pass\\(?: phrase\\|phrase\\|word\\)\\|Response\\|pass\\(?: phrase\\|phrase\\|word\\)\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: for \\(?:'[^']*'\\|[^:]+\\)\\)?:\\s *\\'")
  '(completion-ignored-extensions (quote (".svn/" "CVS/" ".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".dvi" ".fmt" ".tfm" ".pdf" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".fasl" ".ufsl" ".fsl" ".dxl" ".pfsl" ".dfsl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" ".abc")))
  '(debug-on-error t)
  '(gdb-enable-debug t)
+ '(gud-gud-gdb-command-name "gdb --fullname")
+ '(js2-basic-offset 2)
+ '(js2-bounce-indent-p t)
  '(line-move-visual nil)
  '(truncate-partial-width-windows nil)
  '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
@@ -32,8 +36,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(diff-added ((t (:foreground "DarkGreen"))) t)
- '(diff-removed ((t (:foreground "DarkRed"))) t)
+ '(diff-added ((t (:foreground "DarkGreen"))))
+ '(diff-removed ((t (:foreground "DarkRed"))))
  '(whitespace-line ((t (:background "alice blue"))))
  '(whitespace-tab ((t (:background "light goldenrod" :foreground "lightgray")))))
 
@@ -51,7 +55,11 @@
 (require 'server)
 (when (not (server-running-p))
   (server-start)
-  (setenv "EDITOR" "~/bin/emacsclient"))
+  (setenv "EDITOR" "~/bin/emacsclient")
+  ;; (setenv "EDITOR" (concat exec-directory "/emacsclient"))
+  )
+
+(setenv "GIT_PAGER" "cat")
 
 ;; EmacsWiki explains that this fixes whitespace character
 ;; rendering for Fedora and OS X 
