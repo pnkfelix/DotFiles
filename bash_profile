@@ -6,3 +6,7 @@ export EDITOR=emacsclient
 
 # Instead, see p4config
 export P4CONFIG=~/.p4config
+
+if [ -f ~/.bashrc ]; then
+   source ~/.bashrc
+fi
