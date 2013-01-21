@@ -546,6 +546,10 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
                             (local-set-key "\C-cl"    'js-load-file-and-go)
                             ))
 
+;; See https://github.com/mozilla/rust/tree/master/src/etc/emacs
+(add-to-list 'load-path "~/ConfigFiles/Elisp/rust-mode")
+(require 'rust-mode)
+
 (defvar worklog-directory "~/Documents/WorkLog")
 (cond (emacs-is-felixs-worklog
        (setq inhibit-splash-screen t)
