@@ -1,7 +1,7 @@
 [ui]
 username = Felix S. Klock II <pnkfelix@pnkfx.org>
 ignore = ~/.hgignore
-merge = fskmerge
+#merge = fskmerge
 
 [trusted]
 users = pnkfelix, fklockii, fklock
@@ -96,6 +96,8 @@ fskmerge.args = $local $other $base $output
 #emacs.args = -q --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
 #emacs.args = -q --eval "(emerge-files-with-ancestor nil \"$local\" \"$other\" \"$base\" \"$output\" nil 'kill-emacs)"
 #emacsclient.args = -q --eval "(emerge-files-with-ancestor nil \"$local\" \"$other\" \"$base\" \"$output\" nil)"
+
+emacs.args = -q --eval "(require 'ediff)" --eval "(setq ediff-window-setup-function 'ediff-setup-windows-plain)" --eval "(add-hook 'ediff-quit-hook 'save-buffers-kill-emacs)" --eval "(ediff-merge-with-ancestor \""$local"\" \""$other"\" \""$base"\" nil \""$output"\")"
 
 [qimportbz]
 # patch_format = "bug-%(bugnum)s-%(filename)s"

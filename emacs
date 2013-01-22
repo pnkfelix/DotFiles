@@ -1,5 +1,11 @@
 ;; -*- mode: lisp; indent-tabs-mode: nil -*-
 
+(defvar emacs-is-felixs-worklog
+  (string-match "WorkLog" (getenv "EMACSLOADPATH"))
+  (concat
+   "non-nil only if this Emacs is named something like EmacsWorkLog.  "
+   "Used to specializing environment for independent worklog emacs instance."))
+
 ;; Coding system stuff is discussed in Info node
 ;; Interational .. Coding Systems
 
@@ -52,12 +58,13 @@
 ;; (makes left-curly line up with start of if token, among other things)
 (setq c-default-style "linux" c-basic-offset 4)
 
-(require 'server)
-(when (not (server-running-p))
-  (server-start)
-  (setenv "EDITOR" "~/bin/emacsclient")
-  ;; (setenv "EDITOR" (concat exec-directory "/emacsclient"))
-  )
+(cond ((not emacs-is-felixs-worklog)
+       (require 'server)
+       (when (not (server-running-p))
+         (server-start)
+         (setenv "EDITOR" "~/bin/emacsclient")
+         ;; (setenv "EDITOR" (concat exec-directory "/emacsclient"))
+         )))
 
 (setenv "GIT_PAGER" "cat")
 
@@ -518,7 +525,10 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 (require 'color-theme)
 ;; See: http://ethanschoonover.com/solarized
 (add-to-list 'custom-theme-load-path "~/ConfigFiles/Elisp/emacs-color-theme-solarized")
-(load-theme 'solarized-dark t) ; or: (load-theme 'solarized-light t)
+(cond (emacs-is-felixs-worklog
+       (load-theme 'solarized-light t))
+      (t
+       (load-theme 'solarized-dark t)))
 
 ;; http://code.google.com/p/js2-mode/wiki/InstallationInstructions
 (autoload 'js2-mode "js2-mode" nil t)
@@ -527,7 +537,7 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 ;; See http://js-comint-el.sourceforge.net/
 (require 'js-comint)
 (setq inferior-js-program-command
-      "/Users/fklock/Dev/Mozilla/iontrail/objdir-js/js")
+      "/Users/fklock/Dev/Mozilla/iontrail/objdir-dbg-js/js")
 (add-hook 'js2-mode-hook '(lambda ()
                             (local-set-key "\C-x\C-e" 'js-send-last-sexp)
                             (local-set-key "\C-\M-x"  'js-send-last-sexp-and-go)
@@ -535,3 +545,18 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
                             (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
                             (local-set-key "\C-cl"    'js-load-file-and-go)
                             ))
+
+;; See https://github.com/mozilla/rust/tree/master/src/etc/emacs
+(add-to-list 'load-path "~/ConfigFiles/Elisp/rust-mode")
+(require 'rust-mode)
+
+(defvar worklog-directory "~/Documents/WorkLog")
+(cond (emacs-is-felixs-worklog
+       (setq inhibit-splash-screen t)
+
+       ;(setq-default default-directory worklog-directory)
+       (let ((default-directory worklog-directory))
+         ;; (call-interactively 'find-file)
+         ;; (call-interactively 'dired)
+         (dired worklog-directory)
+         )))
