@@ -609,6 +609,29 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 
 (add-hook 'ediff-after-quit-hooks 'git-mergetool-emacsclient-ediff-after-quit-hook 'append)
 
+(defun tell-emacsclients-for-buffer-to-die ()
+  "Sends error exit command to every client for the current buffer."
+  (interactive)
+  (dolist (proc server-buffer-clients)
+    (server-send-string proc "-error die")))
+
+(defun tell-all-emacsclients-to-die ()
+  "Sends error exit command to every client for the current buffer."
+  (interactive)
+  (dolist (proc server-clients)
+    (server-send-string proc "-error die")))
+
+
+;; (add-hook 'kill-buffer-hook 'tell-emacsclients-for-buffer-to-die)
+
+(defun kill-buffer-with-special-emacsclient-handling ()
+  "Wrapper around kill-buffer that ensures tell-emacsclients-for-buffer-to-die is on the hooks"
+  (interactive)
+  (add-hook 'kill-buffer-hook 'tell-emacsclients-for-buffer-to-die nil t)
+  (kill-buffer))
+
+(global-set-key (kbd "C-x k") 'kill-buffer-with-special-emacsclient-handling)
+
 (defvar worklog-directory "~/Documents/WorkLog")
 (cond (emacs-is-felixs-worklog
        (setq inhibit-splash-screen t)
