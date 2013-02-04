@@ -1,7 +1,7 @@
 [ui]
 username = Felix S. Klock II <pnkfelix@pnkfx.org>
 ignore = ~/.hgignore
-#merge = fskmerge
+merge = fskmerge
 
 [trusted]
 users = pnkfelix, fklockii, fklock
@@ -85,8 +85,8 @@ generated/shell_toplevel.cpp = internal:fail
 utils/opcodes-table.as = internal:fail
 
 [merge-tools]
-#fskmerge.executable = /Users/fklockii/bin/emacsclient-merge
-fskmerge.executable = /Users/fklockii/bin/emacs-merge
+fskmerge.executable = /Users/fklockii/bin/emacsclient-merge
+#fskmerge.executable = /Users/fklockii/bin/emacs-merge
 fskmerge.args = $local $other $base $output
 
 ## These may work for you, but they are problematic for my use of OS X

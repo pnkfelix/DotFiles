@@ -580,7 +580,7 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 (defun local-ediff-before-setup-hook ()
   (setq local-ediff-saved-frame-configuration (current-frame-configuration))
   (setq local-ediff-saved-window-configuration (current-window-configuration))
-  (local-ediff-frame-maximize)
+  ;; (local-ediff-frame-maximize)
   (if git-mergetool-emacsclient-ediff-active
       (raise-frame)))
 
@@ -600,14 +600,15 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 (defun git-mergetool-emacsclient-ediff (local remote base merged)
   (setq git-mergetool-emacsclient-ediff-active t)
   (if (file-readable-p base)
-      (ediff-merge-files-with-ancestor local remote base nil merged)
+      (ediff-merge-files-with-ancestor remote local base nil merged)
     (ediff-merge-files local remote nil merged))
   (recursive-edit))
 
 (defun git-mergetool-emacsclient-ediff-after-quit-hook ()
   (exit-recursive-edit))
 
-(add-hook 'ediff-after-quit-hooks 'git-mergetool-emacsclient-ediff-after-quit-hook 'append)
+(add-hook 'ediff-after-quit-hooks
+          'git-mergetool-emacsclient-ediff-after-quit-hook 'append)
 
 (defun tell-emacsclients-for-buffer-to-die ()
   "Sends error exit command to every client for the current buffer."
@@ -616,12 +617,12 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
     (server-send-string proc "-error die")))
 
 (defun tell-all-emacsclients-to-die ()
-  "Sends error exit command to every client for the current buffer."
+  "Sends error exit command to every client for all buffers."
   (interactive)
   (dolist (proc server-clients)
     (server-send-string proc "-error die")))
 
-
+;;; This doesn't work; the hooks are run too late within the server code.
 ;; (add-hook 'kill-buffer-hook 'tell-emacsclients-for-buffer-to-die)
 
 (defun kill-buffer-with-special-emacsclient-handling ()
@@ -630,7 +631,16 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
   (add-hook 'kill-buffer-hook 'tell-emacsclients-for-buffer-to-die nil t)
   (kill-buffer))
 
-(global-set-key (kbd "C-x k") 'kill-buffer-with-special-emacsclient-handling)
+;; (global-set-key (kbd "C-x k") 'kill-buffer)
+
+(defun install-emacsclient-wrapped-kill-buffer ()
+  "Installs wrapped kill-buffer with special emacsclient handling.
+Best not to install it unconditionally because the server is not
+necessarily running."
+  (interactive)
+  (global-set-key (kbd "C-x k") 'kill-buffer-with-special-emacsclient-handling))
+
+(add-hook 'server-switch-hook 'install-emacsclient-wrapped-kill-buffer)
 
 (defvar worklog-directory "~/Documents/WorkLog")
 (cond (emacs-is-felixs-worklog
