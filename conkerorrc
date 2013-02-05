@@ -1,0 +1,9 @@
+require("tab-bar.js");
+
+// Regular Firefox (non-conkeror)
+function firefox (arg)
+{
+   window.openDialog("chrome://browser/content/");
+}
+
+//add_command("ff", firefox, []);

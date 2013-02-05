@@ -4,6 +4,20 @@ if [ -x /usr/libexec/path_helper ]; then
 	eval `/usr/libexec/path_helper -s`
 fi
 
+# We want the rbenv shims, and we want them at the *front* of the
+# PATH, so we need to either:
+#
+# * Stop using path_helper (...tempting...)
+#
+# * Hack ~/.rbenv/shims into /etc/paths (...probably bad idea...)
+#
+# * Manually change the PATH here
+#   (it won't be present everywhere, but that's okay, I only need it for
+#    shell interactions.)
+
+if [ -d ~/.rbenv/shims  ]; then
+   export PATH=~/.rbenv/shims:$PATH
+fi
 
 ### Inspired by a verbose prompt shown at:
 

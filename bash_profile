@@ -6,5 +6,7 @@ export EDITOR=emacsclient
 
 # Instead, see p4config
 export P4CONFIG=~/.p4config
-# export P4PORT=flashfarm.corp.adobe.com:1666
-# # export P4CLIENT=FlashSandboxCrush
+
+if [ -f ~/.bashrc ]; then
+   source ~/.bashrc
+fi

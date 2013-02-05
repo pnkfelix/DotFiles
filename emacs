@@ -1,5 +1,11 @@
 ;; -*- mode: lisp; indent-tabs-mode: nil -*-
 
+(defvar emacs-is-felixs-worklog
+  (string-match "WorkLog" (getenv "EMACSLOADPATH"))
+  (concat
+   "non-nil only if this Emacs is named something like EmacsWorkLog.  "
+   "Used to specializing environment for independent worklog emacs instance."))
+
 ;; Coding system stuff is discussed in Info node
 ;; Interational .. Coding Systems
 
@@ -20,9 +26,13 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(comint-completion-fignore nil)
+ '(comint-password-prompt-regexp "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|Repeat\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +\\)\\(?:Pass\\(?: phrase\\|phrase\\|word\\)\\|Response\\|pass\\(?: phrase\\|phrase\\|word\\)\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: for \\(?:'[^']*'\\|[^:]+\\)\\)?:\\s *\\'")
  '(completion-ignored-extensions (quote (".svn/" "CVS/" ".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".dvi" ".fmt" ".tfm" ".pdf" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".fasl" ".ufsl" ".fsl" ".dxl" ".pfsl" ".dfsl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" ".abc")))
  '(debug-on-error t)
  '(gdb-enable-debug t)
+ '(gud-gud-gdb-command-name "gdb --fullname")
+ '(js2-basic-offset 2)
+ '(js2-bounce-indent-p t)
  '(line-move-visual nil)
  '(truncate-partial-width-windows nil)
  '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
@@ -32,8 +42,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(diff-added ((t (:foreground "DarkGreen"))) t)
- '(diff-removed ((t (:foreground "DarkRed"))) t)
+ '(diff-added ((t (:foreground "DarkGreen"))))
+ '(diff-removed ((t (:foreground "DarkRed"))))
  '(whitespace-line ((t (:background "alice blue"))))
  '(whitespace-tab ((t (:background "light goldenrod" :foreground "lightgray")))))
 
@@ -48,10 +58,15 @@
 ;; (makes left-curly line up with start of if token, among other things)
 (setq c-default-style "linux" c-basic-offset 4)
 
-(require 'server)
-(when (not (server-running-p))
-  (server-start)
-  (setenv "EDITOR" "~/bin/emacsclient"))
+(cond ((not emacs-is-felixs-worklog)
+       (require 'server)
+       (when (not (server-running-p))
+         (server-start)
+         (setenv "EDITOR" "~/bin/emacsclient")
+         ;; (setenv "EDITOR" (concat exec-directory "/emacsclient"))
+         )))
+
+(setenv "GIT_PAGER" "cat")
 
 ;; EmacsWiki explains that this fixes whitespace character
 ;; rendering for Fedora and OS X 
@@ -335,6 +350,10 @@
   "Resize current frame to be 163 characters width (for two cols)."
   (interactive)
   (set-frame-width (selected-frame) 163))
+(defun frame-246 ()
+  "Resize current frame to be 246 characters width (for three cols)."
+  (interactive)
+  (set-frame-width (selected-frame) 246))
 
 (defun frame-60 ()
   "Resize current frame to be 60 characters high."
@@ -513,7 +532,10 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 (require 'color-theme)
 ;; See: http://ethanschoonover.com/solarized
 (add-to-list 'custom-theme-load-path "~/ConfigFiles/Elisp/emacs-color-theme-solarized")
-(load-theme 'solarized-dark t) ; or: (load-theme 'solarized-light t)
+(cond (emacs-is-felixs-worklog
+       (load-theme 'solarized-light t))
+      (t
+       (load-theme 'solarized-dark t)))
 
 ;; http://code.google.com/p/js2-mode/wiki/InstallationInstructions
 (autoload 'js2-mode "js2-mode" nil t)
@@ -522,7 +544,7 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 ;; See http://js-comint-el.sourceforge.net/
 (require 'js-comint)
 (setq inferior-js-program-command
-      "/Users/fklock/Dev/Mozilla/iontrail/objdir-js/js")
+      "/Users/fklock/Dev/Mozilla/iontrail/objdir-dbg-js/js")
 (add-hook 'js2-mode-hook '(lambda ()
                             (local-set-key "\C-x\C-e" 'js-send-last-sexp)
                             (local-set-key "\C-\M-x"  'js-send-last-sexp-and-go)
@@ -530,3 +552,110 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
                             (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
                             (local-set-key "\C-cl"    'js-load-file-and-go)
                             ))
+
+;; See https://github.com/mozilla/rust/tree/master/src/etc/emacs
+(add-to-list 'load-path "~/ConfigFiles/Elisp/rust-mode")
+(require 'rust-mode)
+
+;; http://stackoverflow.com/questions/1817370/using-ediff-as-git-mergetool/4512729#4512729
+;;
+;; Setup for ediff.
+;;
+(require 'ediff)
+
+(defvar ediff-after-quit-hooks nil
+  "* Hooks to run after ediff or emerge is quit.")
+
+(defadvice ediff-quit (after edit-after-quit-hooks activate)
+  (run-hooks 'ediff-after-quit-hooks))
+
+(setq git-mergetool-emacsclient-ediff-active nil)
+
+(defun local-ediff-frame-maximize ()
+  (let* ((bounds (display-usable-bounds))
+     (x (nth 0 bounds))
+     (y (nth 1 bounds))
+     (width (/ (nth 2 bounds) (frame-char-width)))
+     (height (/ (nth 3 bounds) (frame-char-height))))
+    (set-frame-width (selected-frame) width)
+    (set-frame-height (selected-frame) height)
+    (set-frame-position (selected-frame) x y)))
+
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(setq ediff-split-window-function 'split-window-horizontally)
+
+(defun local-ediff-before-setup-hook ()
+  (setq local-ediff-saved-frame-configuration (current-frame-configuration))
+  (setq local-ediff-saved-window-configuration (current-window-configuration))
+  ;; (local-ediff-frame-maximize)
+  (if git-mergetool-emacsclient-ediff-active
+      (raise-frame)))
+
+(defun local-ediff-quit-hook ()
+  (set-frame-configuration local-ediff-saved-frame-configuration)
+  (set-window-configuration local-ediff-saved-window-configuration))
+
+(defun local-ediff-suspend-hook ()
+  (set-frame-configuration local-ediff-saved-frame-configuration)
+  (set-window-configuration local-ediff-saved-window-configuration))
+
+(add-hook 'ediff-before-setup-hook 'local-ediff-before-setup-hook)
+(add-hook 'ediff-quit-hook 'local-ediff-quit-hook 'append)
+(add-hook 'ediff-suspend-hook 'local-ediff-suspend-hook 'append)
+
+;; Useful for ediff merge from emacsclient.
+(defun git-mergetool-emacsclient-ediff (local remote base merged)
+  (setq git-mergetool-emacsclient-ediff-active t)
+  (if (file-readable-p base)
+      (ediff-merge-files-with-ancestor remote local base nil merged)
+    (ediff-merge-files local remote nil merged))
+  (recursive-edit))
+
+(defun git-mergetool-emacsclient-ediff-after-quit-hook ()
+  (exit-recursive-edit))
+
+(add-hook 'ediff-after-quit-hooks
+          'git-mergetool-emacsclient-ediff-after-quit-hook 'append)
+
+(defun tell-emacsclients-for-buffer-to-die ()
+  "Sends error exit command to every client for the current buffer."
+  (interactive)
+  (dolist (proc server-buffer-clients)
+    (server-send-string proc "-error die")))
+
+(defun tell-all-emacsclients-to-die ()
+  "Sends error exit command to every client for all buffers."
+  (interactive)
+  (dolist (proc server-clients)
+    (server-send-string proc "-error die")))
+
+;;; This doesn't work; the hooks are run too late within the server code.
+;; (add-hook 'kill-buffer-hook 'tell-emacsclients-for-buffer-to-die)
+
+(defun kill-buffer-with-special-emacsclient-handling ()
+  "Wrapper around kill-buffer that ensures tell-emacsclients-for-buffer-to-die is on the hooks"
+  (interactive)
+  (add-hook 'kill-buffer-hook 'tell-emacsclients-for-buffer-to-die nil t)
+  (kill-buffer))
+
+;; (global-set-key (kbd "C-x k") 'kill-buffer)
+
+(defun install-emacsclient-wrapped-kill-buffer ()
+  "Installs wrapped kill-buffer with special emacsclient handling.
+Best not to install it unconditionally because the server is not
+necessarily running."
+  (interactive)
+  (global-set-key (kbd "C-x k") 'kill-buffer-with-special-emacsclient-handling))
+
+(add-hook 'server-switch-hook 'install-emacsclient-wrapped-kill-buffer)
+
+(defvar worklog-directory "~/Documents/WorkLog")
+(cond (emacs-is-felixs-worklog
+       (setq inhibit-splash-screen t)
+
+       ;(setq-default default-directory worklog-directory)
+       (let ((default-directory worklog-directory))
+         ;; (call-interactively 'find-file)
+         ;; (call-interactively 'dired)
+         (dired worklog-directory)
+         )))
