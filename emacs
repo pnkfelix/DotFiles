@@ -1,7 +1,7 @@
 ;; -*- mode: lisp; indent-tabs-mode: nil -*-
 
 (defvar emacs-is-felixs-worklog
-  (string-match "WorkLog" (getenv "EMACSLOADPATH"))
+  (and (getenv "EMACSLOADPATH") (string-match "WorkLog" (getenv "EMACSLOADPATH")))
   (concat
    "non-nil only if this Emacs is named something like EmacsWorkLog.  "
    "Used to specializing environment for independent worklog emacs instance."))
