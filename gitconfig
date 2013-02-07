@@ -12,3 +12,6 @@
 
 [alias]
 	remote-delete = push --delete
+
+[color]
+	ui=always
