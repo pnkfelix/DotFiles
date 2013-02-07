@@ -1,7 +1,7 @@
 ;; -*- mode: lisp; indent-tabs-mode: nil -*-
 
 (defvar emacs-is-felixs-worklog
-  (string-match "WorkLog" (getenv "EMACSLOADPATH"))
+  (and (getenv "EMACSLOADPATH") (string-match "WorkLog" (getenv "EMACSLOADPATH")))
   (concat
    "non-nil only if this Emacs is named something like EmacsWorkLog.  "
    "Used to specializing environment for independent worklog emacs instance."))
@@ -98,7 +98,14 @@
     (reverse accum)))
 
 (defvar system-processor-count
-  (read (car (process-lines "sysctl" "-n" "hw.ncpu"))))
+  (let ((name (system-name)))
+    (cond ((string-match "mac" name)
+           (read (car (process-lines "sysctl" "-n" "hw.ncpu"))))
+          ((or (string-match "linux" name)
+               (string-match "ubuntu" name))
+           (length (process-lines "grep" "processor" "/proc/cpuinfo")))
+          (t
+           1))))
 
 (defvar system-processor-count-old
   (let ((name (system-name)))
