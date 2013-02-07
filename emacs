@@ -550,6 +550,10 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 (add-to-list 'load-path "~/ConfigFiles/Elisp/rust-mode")
 (require 'rust-mode)
 
+;; See git://jblevins.org/git/markdown-mode.git
+(add-to-list 'load-path "~/ConfigFiles/Elisp/markdown-mode")
+(require 'markdown-mode)
+
 ;; http://stackoverflow.com/questions/1817370/using-ediff-as-git-mergetool/4512729#4512729
 ;;
 ;; Setup for ediff.
@@ -652,3 +656,35 @@ necessarily running."
          ;; (call-interactively 'dired)
          (dired worklog-directory)
          )))
+
+(require 'gud)
+(defun gud-pjs (command-line)
+  "Wrapper around gud-gdb that runs firefox using my pjs-alpha profile."
+  ;; --P pjs-alpha
+  (interactive (list (gud-query-cmdline 'gud-gdb)))
+  (let ((new-command-line
+         (cond ((string-match " --args " command-line)
+                (concat command-line " -P pjs-alpha"))
+               (t
+                (concat command-line " --args firefox -P pjs-alpha")))))
+    (gud-gdb new-command-line)))
+
+;; http://www.emacswiki.org/emacs/AnsiColor
+;; Note many programs won't emit color codes, because M-x shell sets
+;; TERM to "dumb"; use e.g. TERM=xterm-color on case-by-case basis.
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+;; https://github.com/magnars/multiple-cursors.el
+(add-to-list 'load-path "~/ConfigFiles/Elisp/multiple-cursors")
+(require 'multiple-cursors)
+
+;; Adds a cursor to each line in an active region.
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+;; https://github.com/victorhge/iedit
+(add-to-list 'load-path "~/ConfigFiles/Elisp/iedit")
+(require 'iedit)
