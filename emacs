@@ -35,6 +35,7 @@
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
  '(truncate-partial-width-windows nil)
+ '(safe-local-variable-values (quote ((buffer-file-coding-system . utf-8-unix))))
  '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
  '(whitespace-style (quote (face trailing tabs space-before-tab empty))))
 (custom-set-faces
