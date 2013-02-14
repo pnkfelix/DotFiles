@@ -1,7 +1,7 @@
 [ui]
 username = Felix S. Klock II <pnkfelix@pnkfx.org>
 ignore = ~/.hgignore
-merge = fskmerge
+#merge = fskmerge
 
 [trusted]
 users = pnkfelix, fklockii, fklock
@@ -13,6 +13,9 @@ git = True
 showfunc = True
 unified = 8
 
+[paths]
+try = ssh://hg.mozilla.org/try
+
 [alias]
 # show files affected by all applied patches
 qpstatus = status --rev qparent
@@ -20,6 +23,8 @@ qpstatus = status --rev qparent
 qpdiff = diff --rev qparent
 # show revision history since qparent (last pulled revision)
 qlog = log -r qtip:qparent
+
+moz-try = push -f try
 
 %include .hgrc-extensions
 
@@ -33,32 +38,6 @@ pdiff = --git
 #prechangegroup.mq-no-pull = ! hg qtop > /dev/null 2>&1
 # Prevent "hg push" if MQ patches are applied
 #preoutgoing.mq-no-push    = ! hg qtop > /dev/null 2>&1
-
-[paths]
-# default = /Users/fklockii/Dev/tamarin-redux
-tr = http://hg.mozilla.org/tamarin-redux
-sandbox1 = http://asteam.macromedia.com/hg/users/fklockii/tr-sandbox1/
-tr-patch-qs = http://asteam.macromedia.com/hg/users/fklockii/tr-patch-queues
-frr-patch-qs = ssh://asteam.macromedia.com/hg/users/fklockii/frr-patch-queues
-dev-tr = /Users/fklockii/Dev/tamarin-redux
-bug-tr = /Users/fklockii/Dev/Bugz/tamarin-redux
-tr-mq = http://asteam.macromedia.com/hg/users/fklockii/tr-patch-queues
-frr-mq = ssh://asteam.macromedia.com/hg/users/fklockii/frr-patch-queues
-
-configfiles-mbp = ssh://fklockii-MacBookPro.local/ConfigFiles
-configfiles-pro = ssh://fklockii-MacPro.local/ConfigFiles
-configfiles-imac = ssh://fklockii-iMac.local/ConfigFiles
-configfiles-adbe-osx = /Volumes/Users_F/fklockii/Repositories/Mercurial/ConfigFiles
-
-dotfiles-mbp = ssh://fklockii-MacBookPro.local/DotFiles
-dotfiles-pro = ssh://fklockii-MacPro.local/DotFiles
-dotfiles-imac = ssh://fklockii-iMac.local/DotFiles
-dotfiles-adbe-osx = /Volumes/Users_F/fklockii/Repositories/Mercurial/DotFiles
-
-binfiles-mbp = ssh://fklockii-MacBookPro.local/bin
-binfiles-pro = ssh://fklockii-MacPro.local/bin
-binfiles-imac = ssh://fklockii-iMac.local/bin
-binfiles-adbe-osx = /Volumes/Users_F/fklockii/Repositories/Mercurial/ScriptFiles
 
 [merge-patterns]
 **.exe = internal:fail
