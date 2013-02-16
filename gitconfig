@@ -12,6 +12,7 @@
 
 [alias]
 	remote-delete = push --delete
+	bz-diff = diff --no-color -U8 -C -M --patience
 
 [color]
 	ui=always
