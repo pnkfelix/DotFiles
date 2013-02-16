@@ -21,6 +21,12 @@ if [ -d ~/.rbenv/shims  ]; then
    export PATH=~/.rbenv/shims:$PATH
 fi
 
+# Following same reasoning as for rbenv above, I will add ~/bin to the
+# path since I want it for *shell* interactions.
+if [ -d ~/bin ]; then
+    export PATH=~/bin:$PATH
+fi
+
 ### Inspired by a verbose prompt shown at:
 
 ## http://stevelosh.com/blog/2009/05/what-i-hate-about-mercurial/
