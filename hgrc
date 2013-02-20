@@ -15,6 +15,10 @@ unified = 8
 
 [paths]
 try = ssh://hg.mozilla.org/try
+moz-central = http://hg.mozilla.org/mozilla-central
+moz-central-push = ssh://hg.mozilla.org/mozilla-central
+moz-inbound = http://hg.mozilla.org/integration/mozilla-inbound
+moz-inbound-push = ssh://hg.mozilla.org/integration/mozilla-inbound
 
 [alias]
 # show files affected by all applied patches
