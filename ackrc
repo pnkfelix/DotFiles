@@ -1,1 +1,3 @@
 --type-add=scheme=.scm,.ss,.sch
+--type-set=rust=.rs,.rc
+--type-set=markdown=.md

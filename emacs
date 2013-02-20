@@ -35,6 +35,7 @@
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
  '(truncate-partial-width-windows nil)
+ '(safe-local-variable-values (quote ((buffer-file-coding-system . utf-8-unix))))
  '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
  '(whitespace-style (quote (face trailing tabs space-before-tab empty))))
 (custom-set-faces
@@ -42,8 +43,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(diff-added ((t (:foreground "DarkGreen"))))
- '(diff-removed ((t (:foreground "DarkRed"))))
+ '(diff-added ((t (:foreground "DarkGreen"))) t)
+ '(diff-removed ((t (:foreground "DarkRed"))) t)
  '(whitespace-line ((t (:background "alice blue"))))
  '(whitespace-tab ((t (:background "light goldenrod" :foreground "lightgray")))))
 
