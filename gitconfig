@@ -1,6 +1,6 @@
 [user]
 	name = Felix S. Klock II
-	email = pnkfelix@mozilla.com
+	email = pnkfelix@pnkfx.org
 
 [mergetool "ediff"]
 	cmd = ~/bin/emacsclient --eval \"(git-mergetool-emacsclient-ediff \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" \\\"$MERGED\\\")\"
@@ -11,6 +11,9 @@
 	tool = ediff
 
 [alias]
+	graph = log --decorate --oneline --graph --branches --date-order
+	lg = log --graph --pretty=format:'%C(yellow)%h%Creset -%C(yellow)%d%Creset %s %C(green)(%cr)%Creset %Cred<%an>%Creset' --abbrev-commit --date=relative --date-order
+	today = !git log --author=$(git config user.email) --since=yesterday
 	remote-delete = push --delete
 	bz-diff = diff --no-color -U8 -C -M --patience
 
