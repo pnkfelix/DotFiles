@@ -34,8 +34,9 @@
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
- '(truncate-partial-width-windows nil)
  '(safe-local-variable-values (quote ((buffer-file-coding-system . utf-8-unix))))
+ '(scheme-program-name "~/bin/larceny")
+ '(truncate-partial-width-windows nil)
  '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
  '(whitespace-style (quote (face trailing tabs space-before-tab empty))))
 (custom-set-faces
@@ -696,3 +697,13 @@ necessarily running."
 ;; https://github.com/victorhge/iedit
 (add-to-list 'load-path "~/ConfigFiles/Elisp/iedit")
 (require 'iedit)
+
+;; https://github.com/technomancy/clojure-mode
+(add-to-list 'load-path "~/ConfigFiles/Elisp/clojure-mode")
+(require 'clojure-mode)
+
+;(add-to-list 'load-path "~/ConfigFiles/Elisp/org-mode/contrib/oldexp")
+;(require 'org-export-generic)
+;(add-to-list 'load-path "~/ConfigFiles/Elisp/orgmode-markdown")
+;(require 'markdown)
+;(require 'org-export)
