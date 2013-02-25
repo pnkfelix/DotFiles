@@ -707,3 +707,7 @@ necessarily running."
 ;(add-to-list 'load-path "~/ConfigFiles/Elisp/orgmode-markdown")
 ;(require 'markdown)
 ;(require 'org-export)
+
+;; Note to self:
+;; Useful: M-x set-input-mode TeX
+;; but to back out: M-x toggle-input-method
