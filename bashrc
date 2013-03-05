@@ -91,6 +91,14 @@ BASE_PS1='$(justtime) $(top_two_dirs)$(parse_hg_branch)$(parse_git_branch)'
 function prompt_err {
   if test "$?" -eq 0; then PS1="$BASE_PS1 % "; else PS1="$BASE_PS1 [ERROR#$?] % "; fi
 }
-PROMPT_COMMAND=prompt_err
+function simplify_prompt {
+    unset PROMPT_COMMAND;
+    PS1='% ';
+}
+function fsk_prompt {
+    PROMPT_COMMAND=prompt_err
+}
+
+fsk_prompt
 
 export P4CONFIG=.fsk_perforce
