@@ -6,6 +6,12 @@
    "non-nil only if this Emacs is named something like EmacsWorkLog.  "
    "Used to specializing environment for independent worklog emacs instance."))
 
+(defvar emacs-is-twin
+  (and (getenv "EMACSLOADPATH") (string-match "EmacsTwin" (getenv "EMACSLOADPATH")))
+  (concat
+   "non-nil only if this Emacs is named something like EmacsTwin.  "
+   "Used to specializing environment for independent worklog emacs instance."))
+
 ;; Coding system stuff is discussed in Info node
 ;; Interational .. Coding Systems
 
@@ -536,8 +542,14 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 (add-to-list 'custom-theme-load-path "~/ConfigFiles/Elisp/emacs-color-theme-solarized")
 (cond (emacs-is-felixs-worklog
        (load-theme 'solarized-light t))
+      (emacs-is-twin
+       (color-theme-initialize)
+       ; (color-theme-arjen)
+       (color-theme-jsc-dark)
+       )
       (t
        (load-theme 'solarized-dark t)))
+
 
 ;; http://code.google.com/p/js2-mode/wiki/InstallationInstructions
 (autoload 'js2-mode "js2-mode" nil t)
@@ -683,6 +695,10 @@ necessarily running."
 ;; TERM to "dumb"; use e.g. TERM=xterm-color on case-by-case basis.
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
+;; Niko notes that with M-x ansi-term, one can use C-x C-j to go into
+;; "line mode", which makes it temporarily more like M-x shell, and
+;; then C-c C-k to go back.
+
 ;; https://github.com/magnars/multiple-cursors.el
 (add-to-list 'load-path "~/ConfigFiles/Elisp/multiple-cursors")
 (require 'multiple-cursors)
@@ -701,6 +717,25 @@ necessarily running."
 ;; https://github.com/technomancy/clojure-mode
 (add-to-list 'load-path "~/ConfigFiles/Elisp/clojure-mode")
 (require 'clojure-mode)
+
+;; https://github.com/rolandwalker/unicode-fonts
+(add-to-list 'load-path "~/ConfigFiles/Elisp/unicode-fonts")
+(add-to-list 'load-path "~/ConfigFiles/Elisp/font-utils")
+(add-to-list 'load-path "~/ConfigFiles/Elisp/ucs-utils")
+(add-to-list 'load-path "~/ConfigFiles/Elisp/persistent-soft")
+(add-to-list 'load-path "~/ConfigFiles/Elisp/pcache")
+(require 'persistent-soft) ; be ready to disable this...
+
+(defun fsk-unicode-support ()
+  "Loads the unicode support code and sets it up.  Not run on startup due to slowness."
+  (interactive)
+  (progn
+    (require 'ucs-utils)
+    (require 'font-utils)
+    (require 'unicode-fonts)
+    (unicode-fonts-setup)))
+
+;; To test, do M-x list-charset-chars and look for chess pieces circa line 256x
 
 ;(add-to-list 'load-path "~/ConfigFiles/Elisp/org-mode/contrib/oldexp")
 ;(require 'org-export-generic)
@@ -731,3 +766,37 @@ necessarily running."
  "FSK-TeX" "UTF-8" 'quail-use-package
  "\\" "FSK-customized LaTeX-like input method for many characters."
  "~/ConfigFiles/Elisp/leim/latin-ltx")
+
+;; http://community.schemewiki.org/?emacs-indentation
+;; http://emacswiki.org/emacs/AddKeywords#toc6
+(defun scheme-add-keywords (face-name keyword-rules)
+  (let* ((keyword-list (mapcar #'(lambda (x)
+                                   (symbol-name (cdr x)))
+                               keyword-rules))
+         (keyword-regexp (concat "(\\("
+                                 (regexp-opt keyword-list)
+                                 "\\)[ \n]")))
+    (font-lock-add-keywords 'scheme-mode
+                            `((,keyword-regexp 1 ',face-name))))
+  (mapc #'(lambda (x)
+            (put (cdr x)
+                 'scheme-indent-function
+                 (car x)))
+        keyword-rules))
+
+(add-hook 'scheme-mode-hook 'fsk-scheme-mode-hook)
+
+(defun fsk-scheme-mode-hook ()
+  "Custom Scheme mode hook."
+  (interactive)
+  (make-local-variable 'scheme-indent-function)
+  ;; (put 'parameterize 'scheme-indent-function 1)
+  (scheme-add-keywords 'font-lock-keyword-face
+                       '((1 . when)
+                         (1 . unless)
+                         (2 . let1)
+                         (1 . error)
+                         (1 . parameterize)
+                         (1 . require)
+                         (1 . let*)
+                         )))
