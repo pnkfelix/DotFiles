@@ -7,6 +7,10 @@ export EDITOR=emacsclient
 # Instead, see p4config
 export P4CONFIG=~/.p4config
 
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+  . $(brew --prefix)/etc/bash_completion
+fi
+
 if [ -f ~/.bashrc ]; then
    source ~/.bashrc
 fi
