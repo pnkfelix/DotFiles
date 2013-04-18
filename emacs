@@ -40,6 +40,7 @@
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
+ '(rcirc-server-alist (quote (("irc.mozilla.org" :nick "pnkfelix" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels ("#rust" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule") :encryption tls) ("irc.freenode.net" :nick "pnkfelix" :channels ("#rcirc") nil nil))))
  '(safe-local-variable-values (quote ((buffer-file-coding-system . utf-8-unix))))
  '(scheme-program-name "~/bin/larceny")
  '(truncate-partial-width-windows nil)
@@ -787,3 +788,27 @@ necessarily running."
                          (1 . require)
                          (1 . let*)
                          )))
+
+(require 'package)
+(add-to-list 'package-archives
+             '("marmalade" .
+               "http://marmalade-repo.org/packages/"))
+(package-initialize)
+
+(defun say-hello ()
+  "Sends a hello message to the Mac OS X message center"
+  (interactive)
+  (terminal-notify "Hello" "Emacs"))
+
+(defun terminal-notify (msg &optional title subtitle group)
+  "Sends a message to the Mac OS X message center"
+  (let ((infile nil)
+        (buffer "*terminal-notifier*")
+        (display t))
+    (apply 'call-process
+           "terminal-notifier" infile buffer display
+           "-message" msg
+           (append (if title    (list "-title"    title)    nil)
+                   (if subtitle (list "-subtitle" subtitle) nil)
+                   (if group    (list "-group"    group)    nil))
+           )))
