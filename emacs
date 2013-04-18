@@ -107,7 +107,7 @@
 
 (defvar system-processor-count
   (let ((name (system-name)))
-    (cond ((string-match "mac" name)
+    (cond ((or (string-match "mac" name) (string-match "Oenone" name))
            (read (car (process-lines "sysctl" "-n" "hw.ncpu"))))
           ((or (string-match "linux" name)
                (string-match "ubuntu" name))
@@ -529,6 +529,12 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 (require 'ack)
 (autoload 'pcomplete/ack "pcmpl-ack")
 (autoload 'pcomplete/ack-grep "pcmpl-ack")
+
+;; Note that if this stops working, double-check the github
+;; repo; e.g. frankpzh's pull request to clear PROMPT_COMMAND
+(add-to-list 'load-path "~/ConfigFiles/Elisp/emacs-bash-completion")
+(require 'bash-completion)
+(bash-completion-setup)
 
 (add-to-list 'load-path "~/ConfigFiles/Elisp/exec-path-from-shell")
 (require 'exec-path-from-shell)
