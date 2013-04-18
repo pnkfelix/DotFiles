@@ -754,6 +754,25 @@ necessarily running."
 ;; Useful: M-x set-input-mode TeX
 ;; but to back out: M-x toggle-input-method
 
+;;; This is Felix trying (and failing) to resolve
+;;; http://stackoverflow.com/questions/15180175/
+;;;      how-to-disable-underscore-subscripting-in-emacs-tex-input-method
+;;; on his own.
+;;
+;;(defun insert-underscore ()
+;;  (interactive)
+;;  (insert "_"))
+;;(global-set-key "_" 'insert-underscore)
+;;
+
+(defun insert-double-colon-equal ()
+  (interactive)
+  (ucs-insert #x2A74))
+
+(register-input-method
+ "FSK-TeX" "UTF-8" 'quail-use-package
+ "\\" "FSK-customized LaTeX-like input method for many characters."
+ "~/ConfigFiles/Elisp/leim/latin-ltx")
 
 ;; http://community.schemewiki.org/?emacs-indentation
 ;; http://emacswiki.org/emacs/AddKeywords#toc6
