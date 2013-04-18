@@ -1,4 +1,4 @@
-;; -*- mode: lisp; indent-tabs-mode: nil -*-
+;; -*- mode: emacs-lisp; indent-tabs-mode: nil -*-
 
 (defvar emacs-is-felixs-worklog
   (and (getenv "EMACSLOADPATH") (string-match "WorkLog" (getenv "EMACSLOADPATH")))
