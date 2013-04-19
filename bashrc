@@ -102,3 +102,19 @@ function fsk_prompt {
 fsk_prompt
 
 export P4CONFIG=.fsk_perforce
+
+. /usr/local/etc/bash_completion
+
+# See: http://www.simplicidade.org/notes/archives/2008/02/bash_completion.html
+bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
+if [ "$PS1" ] && [ $bmajor -eq 2 ] && [ $bminor '>' 04 ] ; then
+  if [ -f ~/bin/bash_completion   ] ; then
+    BASH_COMPLETION=~/bin/bash_completion
+    BASH_COMPLETION_DIR=~/.bash_completion.d
+    export BASH_COMPLETION BASH_COMPLETION_DIR
+    . ~/bin/bash_completion
+  fi
+fi  
+unset bash bmajor bminor
+
+. ~/.bash_completion.d/rake.sh

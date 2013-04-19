@@ -1,4 +1,4 @@
-;; -*- mode: lisp; indent-tabs-mode: nil -*-
+;; -*- mode: emacs-lisp; indent-tabs-mode: nil -*-
 
 (defvar emacs-is-felixs-worklog
   (and (getenv "EMACSLOADPATH") (string-match "WorkLog" (getenv "EMACSLOADPATH")))
@@ -40,6 +40,7 @@
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
+ '(rcirc-server-alist (quote (("irc.mozilla.org" :nick "pnkfelix" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels ("#rust" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule") :encryption tls) ("irc.freenode.net" :nick "pnkfelix" :channels ("#rcirc") nil nil))))
  '(safe-local-variable-values (quote ((buffer-file-coding-system . utf-8-unix))))
  '(scheme-program-name "~/bin/larceny")
  '(truncate-partial-width-windows nil)
@@ -107,7 +108,7 @@
 
 (defvar system-processor-count
   (let ((name (system-name)))
-    (cond ((string-match "mac" name)
+    (cond ((or (string-match "mac" name) (string-match "Oenone" name))
            (read (car (process-lines "sysctl" "-n" "hw.ncpu"))))
           ((or (string-match "linux" name)
                (string-match "ubuntu" name))
@@ -533,6 +534,12 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 (autoload 'pcomplete/ack "pcmpl-ack")
 (autoload 'pcomplete/ack-grep "pcmpl-ack")
 
+;; Note that if this stops working, double-check the github
+;; repo; e.g. frankpzh's pull request to clear PROMPT_COMMAND
+(add-to-list 'load-path "~/ConfigFiles/Elisp/emacs-bash-completion")
+(require 'bash-completion)
+(bash-completion-setup)
+
 (add-to-list 'load-path "~/ConfigFiles/Elisp/exec-path-from-shell")
 (require 'exec-path-from-shell)
 (when (memq window-system '(mac ns))
@@ -803,3 +810,27 @@ necessarily running."
                          (1 . require)
                          (1 . let*)
                          )))
+
+(require 'package)
+(add-to-list 'package-archives
+             '("marmalade" .
+               "http://marmalade-repo.org/packages/"))
+(package-initialize)
+
+(defun say-hello ()
+  "Sends a hello message to the Mac OS X message center"
+  (interactive)
+  (terminal-notify "Hello" "Emacs"))
+
+(defun terminal-notify (msg &optional title subtitle group)
+  "Sends a message to the Mac OS X message center"
+  (let ((infile nil)
+        (buffer "*terminal-notifier*")
+        (display t))
+    (apply 'call-process
+           "terminal-notifier" infile buffer display
+           "-message" msg
+           (append (if title    (list "-title"    title)    nil)
+                   (if subtitle (list "-subtitle" subtitle) nil)
+                   (if group    (list "-group"    group)    nil))
+           )))
