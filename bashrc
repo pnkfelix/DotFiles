@@ -108,7 +108,7 @@ export P4CONFIG=.fsk_perforce
 # See: http://www.simplicidade.org/notes/archives/2008/02/bash_completion.html
 bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
 if [ "$PS1" ] && [ $bmajor -eq 2 ] && [ $bminor '>' 04 ] ; then
-  if [ -f ~/bin/bash_completion   ] ; then
+  if [ -f ~/bin/bash_completion && -f ~/.bash_completion.d  ] ; then
     BASH_COMPLETION=~/bin/bash_completion
     BASH_COMPLETION_DIR=~/.bash_completion.d
     export BASH_COMPLETION BASH_COMPLETION_DIR
@@ -117,4 +117,6 @@ if [ "$PS1" ] && [ $bmajor -eq 2 ] && [ $bminor '>' 04 ] ; then
 fi  
 unset bash bmajor bminor
 
-. ~/.bash_completion.d/rake.sh
+if [ -f ~/.bash_completion.d ] ; then
+    . ~/.bash_completion.d/rake.sh
+fi
