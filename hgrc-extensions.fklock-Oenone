@@ -9,6 +9,7 @@ graphlog =
 transplant =
 bookmarks =
 qimportbz = ~/ConfigFiles/Mercurial/qimportbz
+trychooser = ~/ConfigFiles/Mercurial/trychooser/trychooser
 perfarce  = ~/ConfigFiles/Mercurial/perfarce/perfarce.py
 rdiff     = ~/ConfigFiles/Mercurial/rdiff/rdiff.py
 ## Added after reading hgx/install.sh
