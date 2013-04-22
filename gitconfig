@@ -16,6 +16,6 @@
 	today = !git log --author=$(git config user.email) --since=yesterday
 	remote-delete = push --delete
 	bz-diff = diff --no-color -U8 -C -M --patience
-
+	bz-patch = log --patch --no-color -U8 -C -M --patience -1
 [color]
 	ui=always
