@@ -831,3 +831,16 @@ necessarily running."
                    (if subtitle (list "-subtitle" subtitle) nil)
                    (if group    (list "-group"    group)    nil))
            )))
+
+(defun say-when-compilation-finished (buffer string)
+  "Sends a compile-done message to Mac OS X message center."
+  ; (terminal-notify string "Compile finished" buffer)
+  (terminal-notify string "Compile finished" (buffer-name buffer)))
+
+(add-to-list 'compilation-finish-functions 'say-when-compilation-finished)
+
+(defun yank-removing-newlines ()
+  "Yanks the last stretch of killed text, removing newlines.
+See also `yank' (\\[yank])."
+  (interactive)
+  (insert-for-yank (replace-regexp-in-string "\n" "" (current-kill 0))))
