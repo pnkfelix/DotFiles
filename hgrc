@@ -33,7 +33,7 @@ moz-try = push -f try
 %include .hgrc-extensions
 
 [defaults]
-#diff=-p -U 8
+diff=-p -U 8
 ## Added after reading hgx/install.sh
 pdiff = --git
 
