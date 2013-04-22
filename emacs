@@ -526,6 +526,9 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 (global-set-key "\M-?" 'etags-select-find-tag-at-point)
 (global-set-key "\M-." 'etags-select-find-tag)
 
+(add-to-list 'load-path "~/ConfigFiles/Elisp/emacs-w3m")
+(require 'w3m-load)
+
 (add-to-list 'load-path "~/ConfigFiles/Elisp/ack-el")
 (require 'ack)
 (autoload 'pcomplete/ack "pcmpl-ack")
