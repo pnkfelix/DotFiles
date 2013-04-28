@@ -103,7 +103,9 @@ fsk_prompt
 
 export P4CONFIG=.fsk_perforce
 
-. /usr/local/etc/bash_completion
+if [ -f /usr/local/etc/bash_completion ] ; then
+    . /usr/local/etc/bash_completion
+fi
 
 # See: http://www.simplicidade.org/notes/archives/2008/02/bash_completion.html
 bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
