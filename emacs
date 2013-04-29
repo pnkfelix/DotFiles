@@ -40,7 +40,7 @@
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
- '(rcirc-server-alist (quote (("irc.mozilla.org" :nick "pnkfelix" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels ("#rust" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule") :encryption tls) ("irc.freenode.net" :nick "pnkfelix" :channels ("#rcirc") nil nil))))
+ '(rcirc-server-alist (quote (("irc.mozilla.org" :nick "pnkfelix|rcirc" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels ("#rust" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule") :encryption tls) ("irc.freenode.net" :nick "pnkfelix" :channels ("#rcirc") nil nil))))
  '(safe-local-variable-values (quote ((buffer-file-coding-system . utf-8-unix))))
  '(scheme-program-name "~/bin/larceny")
  '(truncate-partial-width-windows nil)
@@ -526,8 +526,9 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 (global-set-key "\M-?" 'etags-select-find-tag-at-point)
 (global-set-key "\M-." 'etags-select-find-tag)
 
-(add-to-list 'load-path "~/ConfigFiles/Elisp/emacs-w3m")
-(require 'w3m-load)
+(cond ((file-exists-p "~/ConfigFiles/Elisp/emacs-w3m/w3m-load.el")
+       (add-to-list 'load-path "~/ConfigFiles/Elisp/emacs-w3m")
+       (require 'w3m-load)))
 
 (add-to-list 'load-path "~/ConfigFiles/Elisp/ack-el")
 (require 'ack)
@@ -567,8 +568,9 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 
 ;; See http://js-comint-el.sourceforge.net/
 (require 'js-comint)
-(setq inferior-js-program-command
-      "/Users/fklock/Dev/Mozilla/iontrail/objdir-dbg-js/js")
+(let ((wip-js "/Users/fklock/Dev/Mozilla/iontrail-wip/objdir-dbg-js/js"))
+  (cond ((file-exists-p wip-js)
+         (setq inferior-js-program-command wip-js))))
 (add-hook 'js2-mode-hook '(lambda ()
                             (local-set-key "\C-x\C-e" 'js-send-last-sexp)
                             (local-set-key "\C-\M-x"  'js-send-last-sexp-and-go)
