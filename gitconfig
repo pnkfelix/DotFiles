@@ -19,3 +19,6 @@
 	bz-patch = log --patch --no-color -U8 -C -M --patience -1
 [color]
 	ui=always
+[include]
+	# Machine-dependent settings that do not belong in VCS.
+	path = ~/.gitconfig-private
