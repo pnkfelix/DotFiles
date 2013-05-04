@@ -825,16 +825,23 @@ necessarily running."
 
 (defun terminal-notify (msg &optional title subtitle group)
   "Sends a message to the Mac OS X message center"
-  (let ((infile nil)
-        (buffer "*terminal-notifier*")
-        (display t))
-    (apply 'call-process
-           "terminal-notifier" infile buffer display
-           "-message" msg
-           (append (if title    (list "-title"    title)    nil)
-                   (if subtitle (list "-subtitle" subtitle) nil)
-                   (if group    (list "-group"    group)    nil))
-           )))
+  (cond
+   ((executable-find "terminal-notify")
+    (let ((infile nil)
+          (buffer "*terminal-notifier*")
+          (display t))
+      (apply 'call-process
+             "terminal-notifier" infile buffer display
+             "-message" msg
+             (append (if title    (list "-title"    title)    nil)
+                     (if subtitle (list "-subtitle" subtitle) nil)
+                     (if group    (list "-group"    group)    nil))
+             )))
+   (t (growl-page-me (if title title "")
+                     (concat
+                      (if subtitle (concat subtitle " ") "")
+                      msg
+                      (if group (concat " " group) ""))))))
 
 (defun say-when-compilation-finished (buffer string)
   "Sends a compile-done message to Mac OS X message center."
@@ -848,3 +855,7 @@ necessarily running."
 See also `yank' (\\[yank])."
   (interactive)
   (insert-for-yank (replace-regexp-in-string "\n" "" (current-kill 0))))
+
+(eval-after-load 'rcirc '(require 'rcirc-notify))
+
+(require 'growl)
