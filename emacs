@@ -40,7 +40,7 @@
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
- '(rcirc-server-alist (quote (("irc.mozilla.org" :nick "pnkfelix|rcirc" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels ("#rust" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule") :encryption tls) ("irc.freenode.net" :nick "pnkfelix" :channels ("#rcirc") nil nil))))
+ '(rcirc-server-alist (quote (("irc.mozilla.org" :nick "pnkfelix|rcirc" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels ("#rust" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule") :encryption tls) ("irc.freenode.net" :nick "pnkfelix" :channels ("#rcirc" "#scheme") nil nil))))
  '(safe-local-variable-values (quote ((buffer-file-coding-system . utf-8-unix))))
  '(scheme-program-name "~/bin/larceny")
  '(truncate-partial-width-windows nil)
@@ -851,6 +851,8 @@ necessarily running."
   (terminal-notify string "Compile finished" (buffer-name buffer)))
 
 (add-to-list 'compilation-finish-functions 'say-when-compilation-finished)
+
+(require 'rcirc-notify)
 
 (defun yank-removing-newlines ()
   "Yanks the last stretch of killed text, removing newlines.
