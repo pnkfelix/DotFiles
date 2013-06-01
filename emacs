@@ -108,7 +108,8 @@
 
 (defvar system-processor-count
   (let ((name (system-name)))
-    (cond ((or (string-match "mac" name) (string-match "Oenone" name))
+    (cond ((or (string-match "mac" name) (string-match "Oenone" name)
+               (string-match "Eris" name))
            (read (car (process-lines "sysctl" "-n" "hw.ncpu"))))
           ((or (string-match "linux" name)
                (string-match "ubuntu" name))
@@ -860,3 +861,9 @@ See also `yank' (\\[yank])."
 (eval-after-load 'rcirc '(require 'rcirc-notify))
 
 (require 'growl)
+
+;; Helper I made to help port header files to rust after discovering
+;; that Rust numeric literals do not have an octal variant.
+(defun region-octal-to-hex ()
+  (interactive)
+  (insert (format "0x%x" (string-to-number (current-kill 0) 8))))
