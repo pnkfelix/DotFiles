@@ -869,3 +869,13 @@ See also `yank' (\\[yank])."
 (defun region-octal-to-hex ()
   (interactive)
   (insert (format "0x%x" (string-to-number (current-kill 0) 8))))
+
+(defun list-ref (lst n)
+  "Returns nth element of lst."
+  (nth n lst))
+
+(let ((re (concat "^\\([^ \n]+\\):\\([0-9]+\\):\\([0-9]+\\): "
+                  "\\([0-9]+\\):\\([0-9]+\\) "
+                  "\\(?:[Ee]rror\\|\\([Ww]arning\\)\\):")))
+  (add-to-list 'compilation-error-regexp-alist-alist
+               `(rustc ,re 1 (2 . 4) (3 . 5) (6))))
