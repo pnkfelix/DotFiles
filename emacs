@@ -35,6 +35,7 @@
  '(comint-password-prompt-regexp "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|Repeat\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +\\)\\(?:Pass\\(?: phrase\\|phrase\\|word\\)\\|Response\\|pass\\(?: phrase\\|phrase\\|word\\)\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: for \\(?:'[^']*'\\|[^:]+\\)\\)?:\\s *\\'")
  '(completion-ignored-extensions (quote (".svn/" "CVS/" ".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".dvi" ".fmt" ".tfm" ".pdf" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".fasl" ".ufsl" ".fsl" ".dxl" ".pfsl" ".dfsl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" ".abc")))
  '(debug-on-error t)
+ '(explicit-shell-file-name "bash")
  '(gdb-enable-debug t)
  '(gud-gud-gdb-command-name "gdb --fullname")
  '(js2-basic-offset 2)
@@ -91,6 +92,14 @@
   (if my-fullscreen-p
       (set-frame-parameter nil 'fullscreen 'fullboth)
       (set-frame-parameter nil 'fullscreen 'nil)))
+
+(defun second-toggle-fullscreen ()
+  "Toggle full screen on X11"
+  (interactive)
+  (when (eq window-system 'x)
+    (set-frame-parameter
+     nil 'fullscreen
+     (when (not (frame-parameter nil 'fullscreen)) 'fullboth))))
 
 '(defun ormap (pred l)
   (cond ((consp l) (cond ((funcall pred (car l))
@@ -349,7 +358,7 @@
 (require 'maxframe)
 
 ;(set-frame-height last-event-frame 120)
-(set-frame-height last-event-frame 50)
+;(set-frame-height last-event-frame 50)
 
 (defun frame-80 ()
   "Resize current frame to be 80 characters width."
@@ -841,7 +850,8 @@ necessarily running."
   ; (terminal-notify string "Compile finished" buffer)
   (terminal-notify string "Compile finished" (buffer-name buffer)))
 
-(add-to-list 'compilation-finish-functions 'say-when-compilation-finished)
+(when (memq window-system '(mac ns))
+  (add-to-list 'compilation-finish-functions 'say-when-compilation-finished))
 
 (defun yank-removing-newlines ()
   "Yanks the last stretch of killed text, removing newlines.
