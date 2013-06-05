@@ -109,7 +109,8 @@
 
 (defvar system-processor-count
   (let ((name (system-name)))
-    (cond ((or (string-match "mac" name) (string-match "Oenone" name))
+    (cond ((or (string-match "mac" name) (string-match "Oenone" name)
+               (string-match "Eris" name))
            (read (car (process-lines "sysctl" "-n" "hw.ncpu"))))
           ((or (string-match "linux" name)
                (string-match "ubuntu" name))
@@ -827,16 +828,23 @@ necessarily running."
 
 (defun terminal-notify (msg &optional title subtitle group)
   "Sends a message to the Mac OS X message center"
-  (let ((infile nil)
-        (buffer "*terminal-notifier*")
-        (display t))
-    (apply 'call-process
-           "terminal-notifier" infile buffer display
-           "-message" msg
-           (append (if title    (list "-title"    title)    nil)
-                   (if subtitle (list "-subtitle" subtitle) nil)
-                   (if group    (list "-group"    group)    nil))
-           )))
+  (cond
+   ((executable-find "terminal-notify")
+    (let ((infile nil)
+          (buffer "*terminal-notifier*")
+          (display t))
+      (apply 'call-process
+             "terminal-notifier" infile buffer display
+             "-message" msg
+             (append (if title    (list "-title"    title)    nil)
+                     (if subtitle (list "-subtitle" subtitle) nil)
+                     (if group    (list "-group"    group)    nil))
+             )))
+   (t (growl-page-me (if title title "")
+                     (concat
+                      (if subtitle (concat subtitle " ") "")
+                      msg
+                      (if group (concat " " group) ""))))))
 
 (defun say-when-compilation-finished (buffer string)
   "Sends a compile-done message to Mac OS X message center."
@@ -852,3 +860,23 @@ necessarily running."
 See also `yank' (\\[yank])."
   (interactive)
   (insert-for-yank (replace-regexp-in-string "\n" "" (current-kill 0))))
+
+(eval-after-load 'rcirc '(require 'rcirc-notify))
+
+(require 'growl)
+
+;; Helper I made to help port header files to rust after discovering
+;; that Rust numeric literals do not have an octal variant.
+(defun region-octal-to-hex ()
+  (interactive)
+  (insert (format "0x%x" (string-to-number (current-kill 0) 8))))
+
+(defun list-ref (lst n)
+  "Returns nth element of lst."
+  (nth n lst))
+
+(let ((re (concat "^\\([^ \n]+\\):\\([0-9]+\\):\\([0-9]+\\): "
+                  "\\([0-9]+\\):\\([0-9]+\\) "
+                  "\\(?:[Ee]rror\\|\\([Ww]arning\\)\\):")))
+  (add-to-list 'compilation-error-regexp-alist-alist
+               `(rustc ,re 1 (2 . 4) (3 . 5) (6))))
