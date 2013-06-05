@@ -8,10 +8,15 @@ export EDITOR=emacsclient
 export P4CONFIG=~/.p4config
 
 if type -P brew ; then
-    if [ -f $(brew --prefix)/etc/bash_completion ]; then
-        . $(brew --prefix)/etc/bash_completion
-    fi
+   BASH_COMPLETION=$(brew --prefix)/etc/bash_completion
+else
+   BASH_COMPLETION=/etc/bash_completion
 fi
+if [ -f $BASH_COMPLETION ]; then
+   . $BASH_COMPLETION
+fi
+
+stty -ixon -ixoff
 
 if [ -f ~/.bashrc ]; then
    source ~/.bashrc
