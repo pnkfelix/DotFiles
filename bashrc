@@ -21,11 +21,27 @@ if [ -d ~/.rbenv/shims  ]; then
    export PATH=~/.rbenv/shims:$PATH
 fi
 
+if [ -d ~/.gem/ruby/1.8/bin ]; then
+    export PATH=~/.gem/ruby/1.8/bin:$PATH
+fi
+
 # Following same reasoning as for rbenv above, I will add ~/bin to the
 # path since I want it for *shell* interactions.
 if [ -d ~/bin ]; then
     export PATH=~/bin:$PATH
 fi
+
+## To placate moz-central/spider-monkey `mach bootstrap`, putting
+## homebrew's local bin before the standard bin directories...
+# export PATH=/usr/local/bin:$PATH
+## ...but then the libtool in /usr/local/bin may be questionable,
+## e.g. it might not be compatible with /usr/bin/libtool which
+## supports e.g. libtool -static
+## So I took the above back out again.  :(
+
+# % brew install hg:
+# For non-homebrew python (2.x), you need to amend your PYTHONPATH like so:
+export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
 
 ### Inspired by a verbose prompt shown at:
 
