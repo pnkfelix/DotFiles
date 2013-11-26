@@ -7,7 +7,7 @@
    "Used to specializing environment for independent worklog emacs instance."))
 
 (defvar emacs-is-twin
-  (and (getenv "EMACSLOADPATH") (string-match "EmacsTwin" (getenv "EMACSLOADPATH")))
+  (and (getenv "EMACSLOADPATH") (string-match "Emacs\\(Twin\\|1\\|2\\)" (getenv "EMACSLOADPATH")))
   (concat
    "non-nil only if this Emacs is named something like EmacsTwin.  "
    "Used to specializing environment for independent worklog emacs instance."))
@@ -32,8 +32,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(comint-completion-fignore nil)
- '(comint-password-prompt-regexp "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|Repeat\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +\\)\\(?:Pass\\(?: phrase\\|phrase\\|word\\)\\|Response\\|pass\\(?: phrase\\|phrase\\|word\\)\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: for \\(?:'[^']*'\\|[^:]+\\)\\)?:\\s *\\'")
- '(completion-ignored-extensions (quote (".svn/" "CVS/" ".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".dvi" ".fmt" ".tfm" ".pdf" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".fasl" ".ufsl" ".fsl" ".dxl" ".pfsl" ".dfsl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" ".abc")))
+ '(comint-password-prompt-regexp
+   "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|Repeat\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +\\)\\(?:Pass\\(?: phrase\\|phrase\\|word\\)\\|Response\\|pass\\(?: phrase\\|phrase\\|word\\)\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: for \\(?:'[^']*'\\|[^:]+\\)\\)?:\\s *\\'")
+ '(completion-ignored-extensions
+   (quote
+    (".svn/" "CVS/" ".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".dvi" ".fmt" ".tfm" ".pdf" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".fasl" ".ufsl" ".fsl" ".dxl" ".pfsl" ".dfsl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" ".abc")))
  '(debug-on-error t)
  '(explicit-shell-file-name "bash")
  '(gdb-enable-debug t)
@@ -42,7 +45,14 @@
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
  '(rcirc-log-flag t)
- '(rcirc-server-alist (quote (("irc.mozilla.org" :nick "pnkfelix|rcirc" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels ("#rust" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule") :encryption tls) ("irc.freenode.net" :nick "pnkfelix" :channels ("#rcirc" "#scheme") nil nil))))
+ '(rcirc-server-alist
+   (quote
+    (("irc.mozilla.org" :nick "pnkfelix|rcirc" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels
+      ("#rust" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule")
+      :encryption tls)
+     ("irc.freenode.net" :nick "pnkfelix" :channels
+      ("#rcirc" "#scheme")
+      nil nil))))
  '(safe-local-variable-values (quote ((buffer-file-coding-system . utf-8-unix))))
  '(scheme-program-name "~/bin/larceny")
  '(truncate-partial-width-windows nil)
@@ -55,6 +65,12 @@
  ;; If there is more than one, they won't work right.
  '(diff-added ((t (:foreground "DarkGreen"))) t)
  '(diff-removed ((t (:foreground "DarkRed"))) t)
+ '(ediff-fine-diff-A ((t (:background "#aa2222" :foreground "black"))))
+ '(ediff-fine-diff-B ((t (:background "#22aa22" :foreground "black"))))
+ '(org-agenda-restriction-lock ((t (:background "skyblue4" :foreground "black"))))
+ '(org-clock-overlay ((t (:background "SkyBlue4" :foreground "black"))))
+ '(org-column ((t (:background "grey90" :foreground "black" :strike-through nil :underline nil :slant normal :weight normal :height 120 :family "Monaco"))))
+ '(org-column-title ((t (:background "grey30" :foreground "black" :underline t :weight bold))))
  '(whitespace-line ((t (:background "alice blue"))))
  '(whitespace-tab ((t (:background "light goldenrod" :foreground "lightgray")))))
 
@@ -307,12 +323,17 @@
                        "&& tail -5 " tmp-file " )")))
       (compile cmd))))
 
+(defvar compile-remake-uses-trace nil
+  "Controls whether invocation of remake uses --trace option or not.")
+
 (defun compile-including-xcode ()
   "Compile first looking for Xcode support in current directory."
   (interactive)
   (let* ((has-proj-file (xcode-project-files))
          (core-count-guess (number-to-string system-processor-count))
-         (make-invoke (concat "make -j" core-count-guess)))
+         (make-invoke (concat (cond (compile-remake-uses-trace "remake --trace ")
+                                    (t "make"))
+                              " -j" core-count-guess)))
     (if has-proj-file
         ; then
         (call-interactively 'xcodebuild)
@@ -366,10 +387,18 @@
   "Resize current frame to be 80 characters width."
   (interactive)
   (set-frame-width (selected-frame) 80))
+(defun frame-100 ()
+  "Resize current frame to be 80 characters width."
+  (interactive)
+  (set-frame-width (selected-frame) 100))
 (defun frame-163 ()
   "Resize current frame to be 163 characters width (for two cols)."
   (interactive)
   (set-frame-width (selected-frame) 163))
+(defun frame-203 ()
+  "Resize current frame to be 203 characters width (for two cols of 100 chars)."
+  (interactive)
+  (set-frame-width (selected-frame) 203))
 (defun frame-246 ()
   "Resize current frame to be 246 characters width (for three cols)."
   (interactive)
@@ -758,7 +787,7 @@ necessarily running."
     (require 'unicode-fonts)
     (unicode-fonts-setup)))
 
-;; To test, do M-x list-charset-chars and look for chess pieces circa line 256x
+;; To test, do M-x list-charset-chars and look for chess pieces circa line 265x
 
 ;(add-to-list 'load-path "~/ConfigFiles/Elisp/org-mode/contrib/oldexp")
 ;(require 'org-export-generic)
@@ -885,8 +914,10 @@ See also `yank' (\\[yank])."
   "Returns nth element of lst."
   (nth n lst))
 
-(let ((re (concat "^\\([^ \n]+\\):\\([0-9]+\\):\\([0-9]+\\): "
+'(let ((re (concat "^\\([^ \n]+\\):\\([0-9]+\\):\\([0-9]+\\): "
                   "\\([0-9]+\\):\\([0-9]+\\) "
                   "\\(?:[Ee]rror\\|\\([Ww]arning\\)\\):")))
   (add-to-list 'compilation-error-regexp-alist-alist
                `(rustc ,re 1 (2 . 4) (3 . 5) (6))))
+
+
