@@ -21,6 +21,10 @@ if [ -d ~/.rbenv/shims  ]; then
    export PATH=~/.rbenv/shims:$PATH
 fi
 
+#if [ -d /usr/local/bin  ]; then
+#    export PATH=/usr/local/bin:$PATH
+#fi
+
 # Following same reasoning as for rbenv above, I will add ~/bin to the
 # path since I want it for *shell* interactions.
 if [ -d ~/bin ]; then
