@@ -9,6 +9,7 @@
 	prompt = false
 [merge]
 	tool = ediff
+	conflictstyle = diff3
 
 [alias]
 	graph = log --decorate --oneline --graph --branches --date-order
@@ -22,3 +23,5 @@
 [include]
 	# Machine-dependent settings that do not belong in VCS.
 	path = ~/.gitconfig-private
+[core]
+	editor = /Users/fklock/bin/emacsclient
