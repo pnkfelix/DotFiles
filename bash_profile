@@ -7,7 +7,7 @@ export EDITOR=emacsclient
 # Instead, see p4config
 export P4CONFIG=~/.p4config
 
-if type -P brew ; then
+if type -P brew > /dev/null ; then
    BASH_COMPLETION=$(brew --prefix)/etc/bash_completion
 else
    BASH_COMPLETION=/etc/bash_completion
