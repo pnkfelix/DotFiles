@@ -1,1 +1,2 @@
+echo "Am running emacs_bash"
 export PAGER=cat

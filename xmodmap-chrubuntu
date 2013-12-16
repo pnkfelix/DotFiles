@@ -1,0 +1,20 @@
+!https://bugs.launchpad.net/unity/+bug/729007
+!
+! xmodmap script to swap left control & command keys
+!
+remove control = Control_L
+remove mod4 = Super_L Hyper_L
+keysym Control_L = Super_L Hyper_L
+keysym Super_L = Control_L
+add control = Control_L
+add mod4 = Super_L Hyper_L
+
+! FSK does not know what these two lines are for; may break tilde/backquote
+! Swap two keys Macbook keyboard bug
+! keycode 49 = less greater less greater bar brokenbar
+! keycode 94 = grave asciitilde grave asciitilde notsign notsign
+
+! ***** end of source *****
+
+! See also:
+! http://askubuntu.com/questions/137172/how-to-remap-superleft-key-to-control-key

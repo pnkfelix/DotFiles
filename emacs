@@ -1,21 +1,59 @@
 ;; -*- mode: emacs-lisp; indent-tabs-mode: nil -*-
 
+(defun ormap (pred lst)
+  (let (accum)
+    (dolist (element lst accum)
+      (cond ((funcall pred element)
+             (setq accum (cons element accum)))))
+    (reverse accum)))
+
+(defun any-with-twin (s)
+  (string-match "EmacsTwin" s))
+
+(defun any-with-worklog (s)
+  (string-match "WorkLog" s))
+
+(defun any-with-irc (s)
+  (string-match "EmacsIRC" s))
+
+
+(defvar emacs-is-felixs-irc
+  (and (ormap 'any-with-irc load-path)
+       (concat
+        "non-nil only if this Emacs is named something like EmacsIRC.  "
+        "Used to specializing environment for independent rcirc emacs instance.")))
+
 (defvar emacs-is-felixs-worklog
-  (and (getenv "EMACSLOADPATH") (string-match "WorkLog" (getenv "EMACSLOADPATH")))
-  (concat
-   "non-nil only if this Emacs is named something like EmacsWorkLog.  "
-   "Used to specializing environment for independent worklog emacs instance."))
+  (and (ormap 'any-with-worklog load-path)
+       (concat
+        "non-nil only if this Emacs is named something like EmacsWorkLog.  "
+        "Used to specializing environment for independent worklog emacs instance.")))
 
 (defvar emacs-is-twin
-  (and (getenv "EMACSLOADPATH") (string-match "Emacs\\(Twin\\|1\\|2\\)" (getenv "EMACSLOADPATH")))
-  (concat
-   "non-nil only if this Emacs is named something like EmacsTwin.  "
-   "Used to specializing environment for independent worklog emacs instance."))
+  (and (ormap 'any-with-twin load-path)
+       (concat
+        "non-nil only if this Emacs is named something like EmacsTwin.  "
+        "Used to specializing environment for independent worklog emacs instance.")))
 
 ;; Coding system stuff is discussed in Info node
 ;; Interational .. Coding Systems
 
 (add-to-list 'load-path "~/ConfigFiles/Elisp")
+
+
+(defvar fsk-use-cedet t)
+
+;; http://cedet.sourceforge.net/setup.shtml
+(when (and fsk-use-cedet  (not (featurep 'cedet-devel-load)))
+  (load "~/ConfigFiles/Elisp/cedet/cedet-devel-load.el"))
+
+;; Workaround bug
+;;;; But not these ways
+;;;; (add-to-list 'load-path "~/ConfigFiles/Elisp/cedet/lisp/cedet/srecode")
+;;;; (autoload 'srecode/m3 "~/ConfigFiles/Elisp/cedet/lisp/cedet/srecode/m3.el")
+;;;; (load-file "~/ConfigFiles/Elisp/cedet/lisp/cedet/srecode/loaddefs.el")
+;; gave up, just turned off srecode minor mode below
+
 (require 'whitespace)
 (require 'uniquify)
 (require 'comint) ; so that I can override some its fcns below.
@@ -26,35 +64,37 @@
 ;; too ugly?  and besides, I don't have it on all my machines (yet).
 ;(require 'actionscript-mode)
 
+(require 'gud)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(background-color "#042028")
+ '(background-mode dark)
  '(comint-completion-fignore nil)
- '(comint-password-prompt-regexp
-   "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|Repeat\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +\\)\\(?:Pass\\(?: phrase\\|phrase\\|word\\)\\|Response\\|pass\\(?: phrase\\|phrase\\|word\\)\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: for \\(?:'[^']*'\\|[^:]+\\)\\)?:\\s *\\'")
- '(completion-ignored-extensions
-   (quote
-    (".svn/" "CVS/" ".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".dvi" ".fmt" ".tfm" ".pdf" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".fasl" ".ufsl" ".fsl" ".dxl" ".pfsl" ".dfsl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" ".abc")))
+ '(comint-password-prompt-regexp "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|Repeat\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +\\)\\(?:Pass\\(?: phrase\\|phrase\\|word\\)\\|Response\\|pass\\(?: phrase\\|phrase\\|word\\)\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: for \\(?:'[^']*'\\|[^:]+\\)\\)?:\\s *\\'")
+ '(completion-ignored-extensions (quote (".svn/" "CVS/" ".o" "~" ".bin" ".lbin" ".so" ".a" ".ln" ".blg" ".bbl" ".elc" ".lof" ".glo" ".idx" ".lot" ".dvi" ".fmt" ".tfm" ".pdf" ".class" ".fas" ".lib" ".mem" ".x86f" ".sparcf" ".fasl" ".ufsl" ".fsl" ".dxl" ".pfsl" ".dfsl" ".lo" ".la" ".gmo" ".mo" ".toc" ".aux" ".cp" ".fn" ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".pyc" ".pyo" ".abc")))
+ '(compile-command "time remake -j8")
+ '(cursor-color "#708183")
+ '(custom-safe-themes (quote ("fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" default)))
  '(debug-on-error t)
  '(explicit-shell-file-name "bash")
+ '(foreground-color "#708183")
  '(gdb-enable-debug t)
- '(gud-gud-gdb-command-name "gdb --fullname")
+ '(gud-gud-gdb-command-name "lldb")
+ '(ido-default-buffer-method (quote selected-window))
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
  '(rcirc-log-flag t)
- '(rcirc-server-alist
-   (quote
-    (("irc.mozilla.org" :nick "pnkfelix|rcirc" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels
-      ("#rust" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule")
-      :encryption tls)
-     ("irc.freenode.net" :nick "pnkfelix" :channels
-      ("#rcirc" "#scheme")
-      nil nil))))
+ '(rcirc-server-alist (quote (("irc.mozilla.org" :nick "pnkfelix" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels ("#rust" "#rust-internals" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule") :encryption tls) ("irc.freenode.net" :nick "pnkfelix" :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels ("#rcirc" "#scheme" "#emacs") nil nil))))
+ '(rcirc-time-format "%Y%b%d %H:%M ")
  '(safe-local-variable-values (quote ((buffer-file-coding-system . utf-8-unix))))
  '(scheme-program-name "~/bin/larceny")
+ '(semantic-default-submodes (quote (global-semantic-idle-completions-mode global-semantic-idle-scheduler-mode global-semanticdb-minor-mode global-semantic-idle-summary-mode global-semantic-idle-local-symbol-highlight-mode)))
+ '(tool-bar-mode nil)
  '(truncate-partial-width-windows nil)
  '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
  '(whitespace-style (quote (face trailing tabs space-before-tab empty))))
@@ -65,6 +105,8 @@
  ;; If there is more than one, they won't work right.
  '(diff-added ((t (:foreground "DarkGreen"))) t)
  '(diff-removed ((t (:foreground "DarkRed"))) t)
+ '(ediff-current-diff-A ((t (:background "#553333" :foreground "#AAAAAA"))))
+ '(ediff-current-diff-B ((t (:background "#335533" :foreground "#AAAAAA"))))
  '(ediff-fine-diff-A ((t (:background "#aa2222" :foreground "black"))))
  '(ediff-fine-diff-B ((t (:background "#22aa22" :foreground "black"))))
  '(org-agenda-restriction-lock ((t (:background "skyblue4" :foreground "black"))))
@@ -74,7 +116,6 @@
  '(whitespace-line ((t (:background "alice blue"))))
  '(whitespace-tab ((t (:background "light goldenrod" :foreground "lightgray")))))
 
-(global-whitespace-mode 1)
 (column-number-mode 1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -85,7 +126,7 @@
 ;; (makes left-curly line up with start of if token, among other things)
 (setq c-default-style "linux" c-basic-offset 4)
 
-(cond ((not emacs-is-felixs-worklog)
+(cond ((and (not emacs-is-felixs-worklog) (not emacs-is-felixs-irc))
        (require 'server)
        (when (not (server-running-p))
          (server-start)
@@ -124,13 +165,6 @@
                          (t
                           (ormap pred (cdr l)))))
         ((null l) nil)))
-
-(defun ormap (pred lst)
-  (let (accum)
-    (dolist (element lst accum)
-      (cond ((funcall pred element)
-             (setq accum (cons element accum)))))
-    (reverse accum)))
 
 (defvar system-processor-count
   (let ((name (system-name)))
@@ -388,7 +422,7 @@
   (interactive)
   (set-frame-width (selected-frame) 80))
 (defun frame-100 ()
-  "Resize current frame to be 80 characters width."
+  "Resize current frame to be 100 characters width."
   (interactive)
   (set-frame-width (selected-frame) 100))
 (defun frame-163 ()
@@ -399,6 +433,7 @@
   "Resize current frame to be 203 characters width (for two cols of 100 chars)."
   (interactive)
   (set-frame-width (selected-frame) 203))
+
 (defun frame-246 ()
   "Resize current frame to be 246 characters width (for three cols)."
   (interactive)
@@ -593,6 +628,8 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 (add-to-list 'custom-theme-load-path "~/ConfigFiles/Elisp/emacs-color-theme-solarized")
 (cond (emacs-is-felixs-worklog
        (load-theme 'solarized-light t))
+      (emacs-is-felixs-irc
+       (load-theme 'wombat t))
       (emacs-is-twin
        (color-theme-initialize)
        ; (color-theme-arjen)
@@ -608,7 +645,7 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 
 ;; See http://js-comint-el.sourceforge.net/
 (require 'js-comint)
-(let ((wip-js "/Users/fklock/Dev/Mozilla/iontrail-wip/objdir-dbg-js/js"))
+(let ((wip-js "/Users/fklock/bin/js"))
   (cond ((file-exists-p wip-js)
          (setq inferior-js-program-command wip-js))))
 (add-hook 'js2-mode-hook '(lambda ()
@@ -618,6 +655,7 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
                             (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
                             (local-set-key "\C-cl"    'js-load-file-and-go)
                             ))
+(setenv "MOZ_SHOW_ALL_JS_FRAMES"  "1")
 
 ;; See https://github.com/mozilla/rust/tree/master/src/etc/emacs
 (add-to-list 'load-path "~/ConfigFiles/Elisp/rust-mode")
@@ -626,6 +664,10 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 ;; See git://jblevins.org/git/markdown-mode.git
 (add-to-list 'load-path "~/ConfigFiles/Elisp/markdown-mode")
 (require 'markdown-mode)
+
+;; See https://github.com/holtzermann17/linepad
+;(add-to-list 'load-path "~/ConfigFiles/Elisp/linepad")
+;(require 'linepad)
 
 ;; http://stackoverflow.com/questions/1817370/using-ediff-as-git-mergetool/4512729#4512729
 ;;
@@ -719,18 +761,6 @@ necessarily running."
 
 (add-hook 'server-switch-hook 'install-emacsclient-wrapped-kill-buffer)
 
-(defvar worklog-directory "~/Documents/WorkLog")
-(cond (emacs-is-felixs-worklog
-       (setq inhibit-splash-screen t)
-
-       ;(setq-default default-directory worklog-directory)
-       (let ((default-directory worklog-directory))
-         ;; (call-interactively 'find-file)
-         ;; (call-interactively 'dired)
-         (dired worklog-directory)
-         )))
-
-(require 'gud)
 (defun gud-pjs (command-line)
   "Wrapper around gud-gdb that runs firefox using my pjs-alpha profile."
   ;; --P pjs-alpha
@@ -901,6 +931,7 @@ See also `yank' (\\[yank])."
   (insert-for-yank (replace-regexp-in-string "\n" "" (current-kill 0))))
 
 (eval-after-load 'rcirc '(require 'rcirc-notify))
+(eval-after-load 'rcirc '(require 'rcirc-color))
 
 (require 'growl)
 
@@ -914,10 +945,62 @@ See also `yank' (\\[yank])."
   "Returns nth element of lst."
   (nth n lst))
 
+;; Rust Issue #6887
+;; Quoting to see if I was wrong and it is now unnecessary
 '(let ((re (concat "^\\([^ \n]+\\):\\([0-9]+\\):\\([0-9]+\\): "
                   "\\([0-9]+\\):\\([0-9]+\\) "
                   "\\(?:[Ee]rror\\|\\([Ww]arning\\)\\):")))
   (add-to-list 'compilation-error-regexp-alist-alist
                `(rustc ,re 1 (2 . 4) (3 . 5) (6))))
 
+;; http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html
+;(add-to-list 'semantic-default-submodes 'semantic-idle-completions-mode)
+;(add-to-list 'semantic-default-submodes 'global-semantic-idle-local-symbol-highlight-mode)
+;;(add-to-list 'semantic-default-submodes 'global-semantic-decoration-mode)
+(cond (fsk-use-cedet
+       (semantic-mode 1)))
 
+;; http://cedet.sourceforge.net/setup.shtml
+;(global-ede-mode 1)                      ; Enable the Project management system
+;(semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion 
+;; Felix: Disable because of some issue where srecode-m3-items is not properly
+;; autoloading srecode/m3.el, AFAICT.
+;(global-srecode-minor-mode 1)            ; Enable template insertion menu
+
+
+(add-to-list 'load-path "~/ConfigFiles/Elisp/auto-complete")
+(add-to-list 'load-path "~/ConfigFiles/Elisp/auto-complete/lib/ert")
+(add-to-list 'load-path "~/ConfigFiles/Elisp/auto-complete/lib/fuzzy")
+(add-to-list 'load-path "~/ConfigFiles/Elisp/auto-complete/lib/popup")
+
+(cond (fsk-use-cedet
+       (require 'auto-complete-config)
+       (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+       (ac-config-default)))
+
+;; Keep this at the end of the initialization file.
+(defvar worklog-directory "~/Documents/WorkLog")
+(cond (emacs-is-felixs-worklog
+       (setq inhibit-splash-screen t)
+
+       ;(setq-default default-directory worklog-directory)
+       (let ((default-directory worklog-directory))
+         ;; (call-interactively 'find-file)
+         ;; (call-interactively 'dired)
+         (dired worklog-directory))
+
+       (split-window-below)
+       (let ((s (shell "*worklog*")))
+         (comint-send-string s "make update\n")
+         s)
+       ))
+
+(cond ((not emacs-is-felixs-irc)
+       ;; Apparently this is incompatible with rcirc face coloring
+       (global-whitespace-mode 1)
+       ))
+
+(cond (emacs-is-felixs-irc
+       (setq inhibit-splash-screen t)
+       (rcirc nil)
+       t))

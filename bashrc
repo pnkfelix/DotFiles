@@ -25,6 +25,10 @@ if [ -d ~/.gem/ruby/1.8/bin ]; then
     export PATH=~/.gem/ruby/1.8/bin:$PATH
 fi
 
+#if [ -d /usr/local/bin  ]; then
+#    export PATH=/usr/local/bin:$PATH
+#fi
+
 # Following same reasoning as for rbenv above, I will add ~/bin to the
 # path since I want it for *shell* interactions.
 if [ -d ~/bin ]; then
