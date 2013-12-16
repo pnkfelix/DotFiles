@@ -25,4 +25,4 @@
 	# Machine-dependent settings that do not belong in VCS.
 	path = ~/.gitconfig-private
 [core]
-	editor = /Users/fklock/bin/emacsclient
+	editor = $HOME/bin/emacsclient
