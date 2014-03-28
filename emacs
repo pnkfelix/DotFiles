@@ -83,11 +83,11 @@
  '(explicit-shell-file-name "bash")
  '(foreground-color "#708183")
  '(gdb-enable-debug t)
- '(gud-gud-gdb-command-name "lldb")
  '(ido-default-buffer-method (quote selected-window))
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
+ '(my-rcirc-notify-timeout 30)
  '(rcirc-log-flag t)
  '(rcirc-server-alist (quote (("irc.mozilla.org" :nick "pnkfelix" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels ("#rust" "#rust-internals" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule") :encryption tls) ("irc.freenode.net" :nick "pnkfelix" :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels ("#rcirc" "#scheme" "#emacs") nil nil))))
  '(rcirc-time-format "%Y%b%d %H:%M ")
@@ -103,8 +103,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(diff-added ((t (:foreground "DarkGreen"))) t)
- '(diff-removed ((t (:foreground "DarkRed"))) t)
+ '(diff-added ((t (:foreground "DarkGreen"))))
+ '(diff-removed ((t (:foreground "DarkRed"))))
  '(ediff-current-diff-A ((t (:background "#553333" :foreground "#AAAAAA"))))
  '(ediff-current-diff-B ((t (:background "#335533" :foreground "#AAAAAA"))))
  '(ediff-fine-diff-A ((t (:background "#aa2222" :foreground "black"))))
@@ -596,6 +596,10 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
        (add-to-list 'load-path "~/ConfigFiles/Elisp/emacs-w3m")
        (require 'w3m-load)))
 
+(cond ((file-exists-p "~/ConfigFiles/Elisp/egg/egg.el")
+       (add-to-list 'load-path "~/ConfigFiles/Elisp/egg")
+       (require 'egg)))
+
 (add-to-list 'load-path "~/ConfigFiles/Elisp/ack-el")
 (require 'ack)
 (autoload 'pcomplete/ack "pcmpl-ack")
@@ -995,3 +999,20 @@ See also `yank' (\\[yank])."
        (setq inhibit-splash-screen t)
        (rcirc nil)
        t))
+
+(require 'flycheck)
+(flycheck-define-checker servo-rust
+  "A Rust syntax checker using the Rust compiler in Servo."
+  :command ("rustc"
+            "-L/Users/fklock/Dev/Rust/rust-sdl/objdir-opt"
+            "-L/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/lib"
+            "-C" "link-args=\" -I/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/include/SDL -framework CoreFoundation -framework CoreGraphics -framework AppKit /Users/fklock/Dev/Rust/rust-sdl/SDL-mirror/src/main/macosx/SDLMain.m  \""
+            "--parse-only"
+            source)
+  :error-patterns
+  ((error line-start (file-name) ":" line ":" column ": "
+          (one-or-more digit) ":" (one-or-more digit) " error: "
+          (message) line-end))
+  :modes rust-mode)
+
+(add-hook 'rust-mode-hook (lambda () (flycheck-select-checker 'servo-rust)))
