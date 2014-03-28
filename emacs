@@ -1,4 +1,7 @@
 ;; -*- mode: emacs-lisp; indent-tabs-mode: nil -*-
+(let ((emacs-priv (concat (getenv "HOME") "/.emacs_private")))
+  (cond ((file-exists-p emacs-priv)
+         (load emacs-priv))))
 
 (defun ormap (pred lst)
   (let (accum)
