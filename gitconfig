@@ -12,6 +12,7 @@
 	conflictstyle = diff3
 
 [alias]
+	log-branches = log --decorate
 	graph = log --decorate --oneline --graph --branches --date-order
 	lg = log --graph --pretty=format:'%C(yellow)%h%Creset -%C(yellow)%d%Creset %s %C(green)(%cr)%Creset %Cred<%an>%Creset' --abbrev-commit --date=relative --date-order
 	today = !git log --author=$(git config user.email) --since=yesterday
@@ -24,4 +25,4 @@
 	# Machine-dependent settings that do not belong in VCS.
 	path = ~/.gitconfig-private
 [core]
-	editor = /Users/fklock/bin/emacsclient
+	editor = $HOME/bin/emacsclient

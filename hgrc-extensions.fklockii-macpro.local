@@ -8,11 +8,11 @@ children =
 graphlog =
 transplant =
 bookmarks =
-qimportbz = ~/ConfigFiles/Mercurial/qimportbz
-perfarce  = ~/ConfigFiles/Mercurial/perfarce/perfarce.py
-rdiff     = ~/ConfigFiles/Mercurial/rdiff/rdiff.py
+#qimportbz = ~/ConfigFiles/Mercurial/qimportbz
+#perfarce  = ~/ConfigFiles/Mercurial/perfarce/perfarce.py
+#rdiff     = ~/ConfigFiles/Mercurial/rdiff/rdiff.py
 ## Added after reading hgx/install.sh
 color =
 convert =
-pbranch = ~/ConfigFiles/Mercurial/hg-pbranch/hgext/pbranch.py
+#pbranch = ~/ConfigFiles/Mercurial/hg-pbranch/hgext/pbranch.py
 #bzexport = ~/ConfigFiles/Mercurial/bzexport/bzexport.py
