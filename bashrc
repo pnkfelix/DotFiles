@@ -47,6 +47,8 @@ fi
 # For non-homebrew python (2.x), you need to amend your PYTHONPATH like so:
 export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
 
+export PKG_CONFIG_PATH=$(find "$HOME/opt" -name pkgconfig | xargs | sed -e 's@ @/:@g')
+
 ### Inspired by a verbose prompt shown at:
 
 ## http://stevelosh.com/blog/2009/05/what-i-hate-about-mercurial/
