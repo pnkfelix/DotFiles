@@ -375,29 +375,61 @@
 (defvar compile-remake-uses-trace nil
   "Controls whether invocation of remake uses --trace option or not.")
 
-(defun compile-including-xcode ()
+(defvar compile-including-xcode-command
+  '(let* ((has-proj-file (xcode-project-files))
+          (core-count-guess (number-to-string system-processor-count))
+          (make-invoke (concat (cond (compile-remake-uses-trace "remake --trace ")
+                                     (t "make"))
+                               " -j" core-count-guess)))
+     (if has-proj-file
+                                        ; then
+         "xcodebuild"
+       (concat "time " make-invoke))))
+
+(defun compile-including-xcode (command &optional comint)
   "Compile first looking for Xcode support in current directory."
-  (interactive)
-  (let* ((has-proj-file (xcode-project-files))
-         (core-count-guess (number-to-string system-processor-count))
-         (make-invoke (concat (cond (compile-remake-uses-trace "remake --trace ")
-                                    (t "make"))
-                              " -j" core-count-guess)))
-    (if has-proj-file
-        ; then
-        (call-interactively 'xcodebuild)
-      ; else
-      (compile (concat "time " make-invoke)))))
+  (interactive
+   (list
+    (let ((command (eval compile-including-xcode-command)))
+      (if (or compilation-read-command current-prefix-arg)
+          (compilation-read-command command)
+        command))
+    (consp current-prefix-arg)))
+  (if (equal "xcodebuild" command)
+      ;; then
+      (call-interactively 'xcodebuild)
+    ;; else
+    (compile command)))
 
 (defun compile-in-compilation-buffer ()
   "Reattempt current compilation."
   (interactive)
   (if (not (string-match "*compil*" (buffer-name)))
       (switch-to-buffer "*compilation*"))
-  (compile-including-xcode))
+  ;; (compile-including-xcode)
+  (recompile)
+  )
 
 ;; (global-set-key (kbd "<f5>") 'compile-including-xcode)
-(global-set-key (kbd "<f5>") 'compile-in-compilation-buffer)
+;; (global-set-key (kbd "<f5>") 'compile-in-compilation-buffer)
+
+;; run compile with the default command line
+(defun recompile-including-xcode (&optional edit-command)
+  "Re-compile the program including the current buffer.
+If this is run in a Compilation mode buffer, re-use the arguments from the
+original use.  Otherwise, recompile using `compile-command'.
+If the optional argument `edit-command' is non-nil, the command can be edited."
+  (interactive "P")
+  (save-some-buffers (not compilation-ask-about-save)
+                     compilation-save-buffers-predicate)
+  (let ((default-directory (or compilation-directory (current-directory))))
+    (when edit-command
+      (setcar compilation-arguments
+              (compilation-read-command (car compilation-arguments))))
+    (apply 'compile-including-xcode (or compilation-arguments
+                                        `(,(eval compile-command))))))
+
+(global-set-key (kbd "<f5>") 'compile-including-xcode)
 
 (defun set-indent-tabs-mode ()
   "Toggle setting for indent-tabs-mode variable."
