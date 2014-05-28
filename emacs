@@ -399,7 +399,8 @@
   (compile-including-xcode))
 
 ;; (global-set-key (kbd "<f5>") 'compile-including-xcode)
-(global-set-key (kbd "<f5>") 'compile-in-compilation-buffer)
+; (global-set-key (kbd "<f5>") 'compile-in-compilation-buffer)
+(global-set-key (kbd "<f5>") 'compile)
 
 (defun set-indent-tabs-mode ()
   "Toggle setting for indent-tabs-mode variable."
