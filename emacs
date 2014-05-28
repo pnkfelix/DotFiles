@@ -681,7 +681,7 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/color-theme-6.6.0")
 (require 'color-theme)
 ;; See: http://ethanschoonover.com/solarized
-;; (add-to-list 'custom-theme-load-path "~/ConfigFiles/Elisp/emacs-color-theme-solarized")
+(add-to-list 'custom-theme-load-path "~/ConfigFiles/Elisp/emacs-color-theme-solarized")
 (cond (emacs-is-felixs-worklog
        (load-theme 'solarized-light t))
       (emacs-is-felixs-irc
@@ -692,7 +692,7 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
        (color-theme-jsc-dark)
        )
       (t
-       ; (load-theme 'solarized-dark t)
+       (load-theme 'solarized-dark t)
        ))
 
 
