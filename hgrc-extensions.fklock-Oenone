@@ -18,4 +18,3 @@ convert =
 pbranch = ~/ConfigFiles/Mercurial/hg-pbranch/hgext/pbranch.py
 #bzexport = ~/ConfigFiles/Mercurial/bzexport/bzexport.py
 hgext.bookmarks =
-hggit =
