@@ -408,17 +408,17 @@
     ;; else
     (compile command)))
 
-(defun compile-in-compilation-buffer ()
+(defun compile-in-compilation-buffer (&optional arg)
   "Reattempt current compilation."
-  (interactive)
+  (interactive (list ; (if current-prefix-arg (compilation-read-command compile-command) nil)))
+                current-prefix-arg))
+  ;; (interactive)
   (if (not (string-match "*compil*" (buffer-name)))
       (switch-to-buffer "*compilation*"))
   ;; (compile-including-xcode)
-  (recompile)
+  ;; (if command (recompile command) (recompile))
+  (recompile arg)
   )
-
-; (global-set-key (kbd "<f5>") 'compile-including-xcode)
-; (global-set-key (kbd "<f5>") 'compile-in-compilation-buffer)
 
 ;; run compile with the default command line
 (defun recompile-including-xcode (&optional edit-command)
@@ -436,7 +436,9 @@ If the optional argument `edit-command' is non-nil, the command can be edited."
     (apply 'compile-including-xcode (or compilation-arguments
                                         `(,(eval compile-command))))))
 
-(global-set-key (kbd "<f5>") 'recompile)
+;; (global-set-key (kbd "<f5>") 'compile-including-xcode)
+(global-set-key (kbd "<f5>") 'compile-in-compilation-buffer)
+;; (global-set-key (kbd "<f5>") 'recompile-including-xcode)
 
 (defun set-indent-tabs-mode ()
   "Toggle setting for indent-tabs-mode variable."
