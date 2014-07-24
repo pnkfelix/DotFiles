@@ -6,6 +6,17 @@ if [ -x /usr/libexec/path_helper ]; then
 	eval `/usr/libexec/path_helper -s`
 fi
 
+## NOTE: The instructions for this actually ask for it to
+## be added to .bash_profile, not .bashrc.  I should check
+## whether *all* of my PATH manipulations should be going
+## into .bash_profile (and if so, why).
+
+# Add GHC 7.8.2 to the PATH, via http://ghcformacosx.github.io/
+export GHC_DOT_APP="/Applications/ghc-7.8.2.app"
+if [ -d "$GHC_DOT_APP" ]; then
+    export PATH="${HOME}/.cabal/bin:${GHC_DOT_APP}/Contents/bin:${PATH}"
+fi
+
 # We want the rbenv shims, and we want them at the *front* of the
 # PATH, so we need to either:
 #
