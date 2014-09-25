@@ -79,8 +79,6 @@
 ;; too ugly?  and besides, I don't have it on all my machines (yet).
 ;(require 'actionscript-mode)
 
-(require 'gud)
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -826,17 +824,6 @@ necessarily running."
   (global-set-key (kbd "C-x k") 'kill-buffer-with-special-emacsclient-handling))
 
 (add-hook 'server-switch-hook 'install-emacsclient-wrapped-kill-buffer)
-
-(defun gud-pjs (command-line)
-  "Wrapper around gud-gdb that runs firefox using my pjs-alpha profile."
-  ;; --P pjs-alpha
-  (interactive (list (gud-query-cmdline 'gud-gdb)))
-  (let ((new-command-line
-         (cond ((string-match " --args " command-line)
-                (concat command-line " -P pjs-alpha"))
-               (t
-                (concat command-line " --args firefox -P pjs-alpha")))))
-    (gud-gdb new-command-line)))
 
 ;; http://www.emacswiki.org/emacs/AnsiColor
 ;; Note many programs won't emit color codes, because M-x shell sets
