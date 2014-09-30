@@ -967,7 +967,12 @@ necessarily running."
 (add-to-list 'package-archives
              '("marmalade" .
                "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
 
 (defun say-hello ()
   "Sends a hello message to the Mac OS X message center"
