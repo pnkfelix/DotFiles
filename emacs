@@ -20,6 +20,9 @@
 (defun any-with-twin (s)
   (string-match "EmacsTwin" s))
 
+(defun any-with-red-twin (s)
+  (string-match "EmacsRedTwin" s))
+
 (defun any-with-worklog (s)
   (string-match "WorkLog" s))
 
@@ -43,6 +46,12 @@
   (and (ormap 'any-with-twin load-path)
        (concat
         "non-nil only if this Emacs is named something like EmacsTwin.  "
+        "Used to specializing environment for independent worklog emacs instance.")))
+
+(defvar emacs-is-red-twin
+  (and (ormap 'any-with-red-twin load-path)
+       (concat
+        "non-nil only if this Emacs is named something like EmacsRedTwin.  "
         "Used to specializing environment for independent worklog emacs instance.")))
 
 ;; Coding system stuff is discussed in Info node
@@ -699,6 +708,11 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
        (color-theme-initialize)
        ; (color-theme-arjen)
        (color-theme-jsc-dark)
+       )
+      (emacs-is-red-twin
+       (color-theme-initialize)
+       ; (color-theme-arjen)
+       (color-theme-tty-dark)
        )
       (t
        (load-theme 'solarized-dark t)
