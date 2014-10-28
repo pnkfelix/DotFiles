@@ -10,6 +10,33 @@
              (setq accum (cons element accum)))))
     (reverse accum)))
 
+(add-to-list 'load-path "~/ConfigFiles/Elisp")
+(setq load-path (append load-path
+                        (mapcar
+                         (lambda (x) (concat "~/ConfigFiles/Elisp/" x))
+                         (filter
+                          (lambda (x) (not (= (aref x 0) (aref "." 0))))
+                          (directory-files "~/ConfigFiles/Elisp/")))))
+
+;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
+;; http://www.youtube.com/watch?v=87tjF_mYvpE
+;;
+;; This is a way to 
+(require 'setup-package)
+(defun init--install-packages ()
+  (packages-install
+   '(flx
+     flx-ido
+     ido-vertical-mode
+     guide-key
+     )))
+
+(condition-case nil
+    (init--install-packages)
+  (error
+   (package-refresh-contents)
+   (init--install-packages)))
+
 (defun ormap (pred lst)
   (let (accum)
     (dolist (element lst accum)
@@ -57,13 +84,6 @@
 ;; Coding system stuff is discussed in Info node
 ;; Interational .. Coding Systems
 
-(add-to-list 'load-path "~/ConfigFiles/Elisp")
-(setq load-path (append load-path
-                        (mapcar
-                         (lambda (x) (concat "~/ConfigFiles/Elisp/" x))
-                         (filter
-                          (lambda (x) (not (= (aref x 0) (aref "." 0))))
-                          (directory-files "~/ConfigFiles/Elisp/")))))
 
 (defvar fsk-use-cedet t)
 
@@ -116,12 +136,12 @@
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
- '(my-rcirc-notify-timeout 30)
+ '(my-rcirc-notify-timeout 5)
  '(rcirc-log-flag t)
  '(rcirc-server-alist
    (quote
     (("irc.mozilla.org" :nick "pnkfelix" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels
-      ("#rust-fr" "#rust-internals" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule")
+      ("#rust-fr" "#rust" "#rust-internals" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule")
       :encryption tls)
      ("irc.freenode.net" :nick "pnkfelix" :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels
       ("#rcirc" "#scheme" "#emacs")
@@ -974,6 +994,11 @@ necessarily running."
 (when (not package-archive-contents)
   (package-refresh-contents))
 
+(unless (package-installed-p 'scala-mode2)
+  (package-refresh-contents) (package-install 'scala-mode2))
+(unless (package-installed-p 'sbt-mode)
+  (package-refresh-contents) (package-install 'sbt-mode))
+
 (defun say-hello ()
   "Sends a hello message to the Mac OS X message center"
   (interactive)
@@ -1106,3 +1131,19 @@ See also `yank' (\\[yank])."
   :modes rust-mode)
 
 (add-hook 'rust-mode-hook (lambda () (flycheck-select-checker 'servo-rust)))
+
+;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
+;; http://www.youtube.com/watch?v=87tjF_mYvpE
+(require 'ido)
+(ido-mode t)
+
+(require 'flx-ido)
+(flx-ido-mode 1)
+;; disable ido faces to see flx highlights
+(setq ido-use-faces nil)
+
+(require 'ido-vertical-mode)
+(ido-vertical-mode)
+
+(require 'guide-key)
+(setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
