@@ -26,3 +26,5 @@
 	path = ~/.gitconfig-private
 [core]
 	editor = $HOME/bin/emacsclient
+[push]
+	default = simple
