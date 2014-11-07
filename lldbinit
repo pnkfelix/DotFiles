@@ -1,0 +1,9 @@
+script import os
+command alias pwd script print os.getcwd()
+
+command regex cd "s/^(.*)$/script os.chdir(os.path.expanduser('%1'))/"
+
+# env MallocScribble=1
+# env MallocCheckHeapStart=0
+# env MallocCheckHeapEach=1
+
