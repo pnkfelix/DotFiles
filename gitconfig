@@ -26,5 +26,6 @@
 	path = ~/.gitconfig-private
 [core]
 	editor = $HOME/bin/emacsclient
+	excludesfile = ~/.gitignore_global
 [push]
 	default = simple
