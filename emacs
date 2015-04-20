@@ -117,6 +117,11 @@
  ;; If there is more than one, they won't work right.
  '(background-color "#042028")
  '(background-mode dark)
+ '(circe-network-options
+   (quote
+    (("irc.mozilla.org" :nick "pnkfelix" :user "pnkfelix" :realname "Felix S. Klock II" :host "irc.mozilla.org" :service 6697 :channels
+      (("#rust-fr" :after-auth))
+      :nickserv-password mozilla-nickserv-password))))
  '(comint-completion-fignore nil)
  '(comint-password-prompt-regexp
    "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|Repeat\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +\\)\\(?:Pass\\(?: phrase\\|phrase\\|word\\)\\|Response\\|pass\\(?: phrase\\|phrase\\|word\\)\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: for \\(?:'[^']*'\\|[^:]+\\)\\)?:\\s *\\'")
@@ -141,7 +146,7 @@
  '(rcirc-server-alist
    (quote
     (("irc.mozilla.org" :nick "pnkfelix" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels
-      ("#rust-fr" "#rust" "#rust-internals" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule")
+      ("#rust-fr" "#rust" "#rust-internals" "#rust-bots" "#rustc" "#rust-libs" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule")
       :encryption tls)
      ("irc.freenode.net" :nick "pnkfelix" :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels
       ("#rcirc" "#scheme" "#emacs")
@@ -179,6 +184,9 @@
 (scroll-bar-mode -1)
 (transient-mark-mode 1)
 (show-paren-mode 1)
+
+; circe-network-options
+; :nickserv-password mozilla-nickserv-password
 
 ;; From: http://www.emacswiki.org/emacs/IndentingC
 ;; (makes left-curly line up with start of if token, among other things)
@@ -1032,8 +1040,6 @@ necessarily running."
 (when (memq window-system '(mac ns))
   (add-to-list 'compilation-finish-functions 'say-when-compilation-finished))
 
-(require 'rcirc-notify)
-
 (defun yank-removing-newlines ()
   "Yanks the last stretch of killed text, removing newlines.
 See also `yank' (\\[yank])."
@@ -1042,6 +1048,27 @@ See also `yank' (\\[yank])."
 
 (eval-after-load 'rcirc '(require 'rcirc-notify))
 (eval-after-load 'rcirc '(require 'rcirc-color))
+
+;; This lists hidden buffers with activity in the modeline
+(eval-after-load 'rcirc '(rcirc-track-minor-mode 1))
+;; C-c C-<SPC> switches to (non low-priority) buffers shown in modeline
+;; C-c C-l   toggles priority of current buffer's channel (i.e. to low-priority)
+;; C-c <TAG> toggles tracking the chanenl (i.e. no more in modeline)
+;;
+;; /keyword <word> highlights the word, and *may* also make its usage
+;; be treated as activity even in a low-priority channel.
+;;
+;; In addition to /ignore <nickname>
+;; there is also
+;; /bright <nickname>
+;; /dim <nickname>
+;;
+;; importantly: dimming a nick stops tracking its activity
+
+;; I may want to look at 
+
+;; FIXME: shouldn't this be unnecessary here?
+(require 'rcirc-notify)
 
 (require 'growl)
 
@@ -1079,14 +1106,14 @@ See also `yank' (\\[yank])."
 
 
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/auto-complete")
-(add-to-list 'load-path "~/ConfigFiles/Elisp/auto-complete/lib/ert")
-(add-to-list 'load-path "~/ConfigFiles/Elisp/auto-complete/lib/fuzzy")
-(add-to-list 'load-path "~/ConfigFiles/Elisp/auto-complete/lib/popup")
+; (add-to-list 'load-path "~/ConfigFiles/Elisp/auto-complete/lib/ert")
+; (add-to-list 'load-path "~/ConfigFiles/Elisp/auto-complete/lib/fuzzy")
+; (add-to-list 'load-path "~/ConfigFiles/Elisp/auto-complete/lib/popup")
 
-(cond (fsk-use-cedet
-       (require 'auto-complete-config)
-       (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-       (ac-config-default)))
+;; (cond (fsk-use-cedet
+;;        (require 'auto-complete-config)
+;;        (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+;;        (ac-config-default)))
 
 ;; Keep this at the end of the initialization file.
 (defvar worklog-directory "~/Documents/WorkLog")
@@ -1110,9 +1137,37 @@ See also `yank' (\\[yank])."
        (global-whitespace-mode 1)
        ))
 
+(defun erc-compute-nick () "pnkfelix")
+(defun erc-compute-full-name () "Felix S. Klock II")
+
+(defun ignore-buffers (buffer-names)
+  (mapcar
+   (lambda (buffer-name) (with-current-buffer buffer-name
+                           (rcirc-toggle-ignore-buffer-activity)))
+   buffer-names))
+   
+
+(defun ignore-usual-rcirc-buffers ()
+  "Ignores the usual set of rcirc buffers."
+  (interactive)
+  (ignore-buffers
+   '("#developers@irc.mozilla.org"
+     "#devtools@irc.mozilla.org"
+     "#ionmonkey@irc.mozilla.org"
+     "#pjs@irc.mozilla.org"
+     "#jsapi@irc.mozilla.org"
+     "#js@irc.mozilla.org"
+     "#jslang@irc.mozilla.org"
+     )))
+       
 (cond (emacs-is-felixs-irc
        (setq inhibit-splash-screen t)
        (rcirc nil)
+       ;; (require 'circe)
+
+       ;; (erc :server "irc.mozilla.org" :port 6697 :nick "pnkfelix" :full-name "Felix S. Klock II")
+       ;; (erc :server "irc.freenode.net" :nick "pnkfelix" :full-name "Felix S. Klock II")
+
        t))
 
 (require 'flycheck)
@@ -1147,3 +1202,28 @@ See also `yank' (\\[yank])."
 
 (require 'guide-key)
 (setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
+
+(require 'mmm-mode)
+ 
+(mmm-add-classes
+ '((markdown-python
+    :submode python-mode
+    :face mmm-declaration-submode-face
+    :front "^```python[\n\r]+"
+    :back "^```$")
+   (markdown-rust
+    :submode rust-mode
+    :face mmm-declaration-submode-face
+    :front "^```rust[\n\r]+"
+    :back "^```$")
+   (markdown-rust-code
+    :submode rust-mode
+    :face mmm-declaration-submode-face
+    :front "^```rust,code[\n\r]+"
+    :back "^```$")
+   ))
+
+;(setq mmm-global-mode 't)
+(mmm-add-mode-ext-class 'markdown-mode nil 'markdown-python)
+(mmm-add-mode-ext-class 'markdown-mode nil 'markdown-rust)
+(mmm-add-mode-ext-class 'markdown-mode nil 'markdown-rust-code)
