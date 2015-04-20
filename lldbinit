@@ -1,7 +1,8 @@
 script import os
 command alias pwd script print os.getcwd()
-
 command regex cd "s/^(.*)$/script os.chdir(os.path.expanduser('%1'))/"
+command regex getenv "s/^(.*)$/script os.getenv('%1')/"
+command regex add_dyld_library_path "s/^(.*)$/settings set target.env-vars DYLD_LIBRARY_PATH='%1:$DYLD_LIBRARY_PATH/"
 
 # env MallocScribble=1
 # env MallocCheckHeapStart=0
