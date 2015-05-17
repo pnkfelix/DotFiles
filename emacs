@@ -1042,7 +1042,9 @@ See also `yank' (\\[yank])."
          ;; (call-interactively 'dired)
          (dired worklog-directory))
 
-       (split-window-below)
+       (cond ((boundp 'split-window-below) (split-window-below))
+             ((boundp 'split-window-vertically) (split-window-vertically)))
+
        (let ((s (shell "*worklog*")))
          (comint-send-string s "make update\n")
          s)
@@ -1058,19 +1060,24 @@ See also `yank' (\\[yank])."
        (rcirc nil)
        t))
 
-(require 'flycheck)
-(flycheck-define-checker servo-rust
-  "A Rust syntax checker using the Rust compiler in Servo."
-  :command ("rustc"
-            "-L/Users/fklock/Dev/Rust/rust-sdl/objdir-opt"
-            "-L/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/lib"
-            "-C" "link-args=\" -I/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/include/SDL -framework CoreFoundation -framework CoreGraphics -framework AppKit /Users/fklock/Dev/Rust/rust-sdl/SDL-mirror/src/main/macosx/SDLMain.m  \""
-            "--parse-only"
-            source)
-  :error-patterns
-  ((error line-start (file-name) ":" line ":" column ": "
-          (one-or-more digit) ":" (one-or-more digit) " error: "
-          (message) line-end))
-  :modes rust-mode)
+;; Maybe interesting but causing startup errors, so no.
+(cond
+ (nil
+  (require 'flycheck)
+  (flycheck-define-checker
+   servo-rust
+   "A Rust syntax checker using the Rust compiler in Servo."
+   :command ("rustc"
+             "-L/Users/fklock/Dev/Rust/rust-sdl/objdir-opt"
+             "-L/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/lib"
+             "-C" "link-args=\" -I/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/include/SDL -framework CoreFoundation -framework CoreGraphics -framework AppKit /Users/fklock/Dev/Rust/rust-sdl/SDL-mirror/src/main/macosx/SDLMain.m  \""
+             "--parse-only"
+             source)
+   :error-patterns
+   ((error line-start (file-name) ":" line ":" column ": "
+           (one-or-more digit) ":" (one-or-more digit) " error: "
+           (message) line-end))
+   :modes rust-mode)
 
-(add-hook 'rust-mode-hook (lambda () (flycheck-select-checker 'servo-rust)))
+  (add-hook 'rust-mode-hook (lambda () (flycheck-select-checker 'servo-rust)))
+  ))
