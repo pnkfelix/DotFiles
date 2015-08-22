@@ -10,6 +10,33 @@
              (setq accum (cons element accum)))))
     (reverse accum)))
 
+(add-to-list 'load-path "~/ConfigFiles/Elisp")
+(setq load-path (append load-path
+                        (mapcar
+                         (lambda (x) (concat "~/ConfigFiles/Elisp/" x))
+                         (filter
+                          (lambda (x) (not (= (aref x 0) (aref "." 0))))
+                          (directory-files "~/ConfigFiles/Elisp/")))))
+
+;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
+;; http://www.youtube.com/watch?v=87tjF_mYvpE
+;;
+;; This is a way to 
+(require 'setup-package)
+(defun init--install-packages ()
+  (packages-install
+   '(flx
+     flx-ido
+     ido-vertical-mode
+     guide-key
+     )))
+
+(condition-case nil
+    (init--install-packages)
+  (error
+   (package-refresh-contents)
+   (init--install-packages)))
+
 (defun ormap (pred lst)
   (let (accum)
     (dolist (element lst accum)
@@ -19,6 +46,9 @@
 
 (defun any-with-twin (s)
   (string-match "EmacsTwin" s))
+
+(defun any-with-red-twin (s)
+  (string-match "EmacsRedTwin" s))
 
 (defun any-with-worklog (s)
   (string-match "WorkLog" s))
@@ -45,16 +75,15 @@
         "non-nil only if this Emacs is named something like EmacsTwin.  "
         "Used to specializing environment for independent worklog emacs instance.")))
 
+(defvar emacs-is-red-twin
+  (and (ormap 'any-with-red-twin load-path)
+       (concat
+        "non-nil only if this Emacs is named something like EmacsRedTwin.  "
+        "Used to specializing environment for independent worklog emacs instance.")))
+
 ;; Coding system stuff is discussed in Info node
 ;; Interational .. Coding Systems
 
-(add-to-list 'load-path "~/ConfigFiles/Elisp")
-(setq load-path (append load-path
-                        (mapcar
-                         (lambda (x) (concat "~/ConfigFiles/Elisp/" x))
-                         (filter
-                          (lambda (x) (not (= (aref x 0) (aref "." 0))))
-                          (directory-files "~/ConfigFiles/Elisp/")))))
 
 (defvar fsk-use-cedet t)
 
@@ -78,8 +107,6 @@
 (require 'javascript-mode)
 ;; too ugly?  and besides, I don't have it on all my machines (yet).
 ;(require 'actionscript-mode)
-
-(require 'gud)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -107,12 +134,12 @@
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
- '(my-rcirc-notify-timeout 30)
+ '(my-rcirc-notify-timeout 5)
  '(rcirc-log-flag t)
  '(rcirc-server-alist
    (quote
     (("irc.mozilla.org" :nick "pnkfelix" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels
-      ("#rust-fr" "#rust-internals" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule")
+      ("#rust-fr" "#rust" "#rust-internals" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule")
       :encryption tls)
      ("irc.freenode.net" :nick "pnkfelix" :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels
       ("#rcirc" "#scheme" "#emacs")
@@ -700,6 +727,11 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
        ; (color-theme-arjen)
        (color-theme-jsc-dark)
        )
+      (emacs-is-red-twin
+       (color-theme-initialize)
+       ; (color-theme-arjen)
+       (color-theme-tty-dark)
+       )
       (t
        (load-theme 'solarized-dark t)
        ))
@@ -827,17 +859,6 @@ necessarily running."
 
 (add-hook 'server-switch-hook 'install-emacsclient-wrapped-kill-buffer)
 
-(defun gud-pjs (command-line)
-  "Wrapper around gud-gdb that runs firefox using my pjs-alpha profile."
-  ;; --P pjs-alpha
-  (interactive (list (gud-query-cmdline 'gud-gdb)))
-  (let ((new-command-line
-         (cond ((string-match " --args " command-line)
-                (concat command-line " -P pjs-alpha"))
-               (t
-                (concat command-line " --args firefox -P pjs-alpha")))))
-    (gud-gdb new-command-line)))
-
 ;; http://www.emacswiki.org/emacs/AnsiColor
 ;; Note many programs won't emit color codes, because M-x shell sets
 ;; TERM to "dumb"; use e.g. TERM=xterm-color on case-by-case basis.
@@ -953,7 +974,17 @@ necessarily running."
 (add-to-list 'package-archives
              '("marmalade" .
                "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+(unless (package-installed-p 'scala-mode2)
+  (package-refresh-contents) (package-install 'scala-mode2))
+(unless (package-installed-p 'sbt-mode)
+  (package-refresh-contents) (package-install 'sbt-mode))
 
 (defun say-hello ()
   "Sends a hello message to the Mac OS X message center"
@@ -1055,7 +1086,9 @@ See also `yank' (\\[yank])."
          ;; (call-interactively 'dired)
          (dired worklog-directory))
 
-       (split-window-below)
+       (cond ((boundp 'split-window-below) (split-window-below))
+             ((boundp 'split-window-vertically) (split-window-vertically)))
+
        (let ((s (shell "*worklog*")))
          (comint-send-string s "make update\n")
          s)
@@ -1071,19 +1104,40 @@ See also `yank' (\\[yank])."
        (rcirc nil)
        t))
 
-(require 'flycheck)
-(flycheck-define-checker servo-rust
-  "A Rust syntax checker using the Rust compiler in Servo."
-  :command ("rustc"
-            "-L/Users/fklock/Dev/Rust/rust-sdl/objdir-opt"
-            "-L/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/lib"
-            "-C" "link-args=\" -I/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/include/SDL -framework CoreFoundation -framework CoreGraphics -framework AppKit /Users/fklock/Dev/Rust/rust-sdl/SDL-mirror/src/main/macosx/SDLMain.m  \""
-            "--parse-only"
-            source)
-  :error-patterns
-  ((error line-start (file-name) ":" line ":" column ": "
-          (one-or-more digit) ":" (one-or-more digit) " error: "
-          (message) line-end))
-  :modes rust-mode)
+;; Maybe interesting but causing startup errors, so no.
+(cond
+ (nil
+  (require 'flycheck)
+  (flycheck-define-checker
+   servo-rust
+   "A Rust syntax checker using the Rust compiler in Servo."
+   :command ("rustc"
+             "-L/Users/fklock/Dev/Rust/rust-sdl/objdir-opt"
+             "-L/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/lib"
+             "-C" "link-args=\" -I/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/include/SDL -framework CoreFoundation -framework CoreGraphics -framework AppKit /Users/fklock/Dev/Rust/rust-sdl/SDL-mirror/src/main/macosx/SDLMain.m  \""
+             "--parse-only"
+             source)
+   :error-patterns
+   ((error line-start (file-name) ":" line ":" column ": "
+           (one-or-more digit) ":" (one-or-more digit) " error: "
+           (message) line-end))
+   :modes rust-mode)
 
-(add-hook 'rust-mode-hook (lambda () (flycheck-select-checker 'servo-rust)))
+  (add-hook 'rust-mode-hook (lambda () (flycheck-select-checker 'servo-rust)))
+  ))
+
+;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
+;; http://www.youtube.com/watch?v=87tjF_mYvpE
+(require 'ido)
+(ido-mode t)
+
+(require 'flx-ido)
+(flx-ido-mode 1)
+;; disable ido faces to see flx highlights
+(setq ido-use-faces nil)
+
+(require 'ido-vertical-mode)
+(ido-vertical-mode)
+
+(require 'guide-key)
+(setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
