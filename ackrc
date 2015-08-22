@@ -1,3 +1,4 @@
 --type-add=scheme=.scm,.ss,.sch
 --type-set=rust=.rs,.rc
 --type-set=markdown=.md
+--type-set=toml=.toml
