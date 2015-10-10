@@ -24,7 +24,7 @@ if [ -f "$usermodmap" ]; then
 fi
 
 # Swap left-ctrl and capslock
-setxkbmap -option ctrl:swapcaps
+~/bin/maybe_swap_caps.sh
 
 # start some nice programs
 
@@ -37,5 +37,16 @@ fi
 
 # exec enlightenment_start
 
-exec i3
+# Keep i3 as the default
+session=${2:-i3}
 
+date >> /tmp/xinitrc.log
+echo session: $session >> /tmp/xinitrc.log
+
+case $session in
+    i3|i3wm     ) exec i3;;
+    # No known session, try to run it as command
+    *)            exec $session;;
+esac
+
+# exec i3
