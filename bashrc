@@ -36,6 +36,10 @@ if [ -d ~/.gem/ruby/1.8/bin ]; then
     export PATH=~/.gem/ruby/1.8/bin:$PATH
 fi
 
+if [ -d ~/.cabal/bin ]; then
+    export PATH=~/.cabal/bin:$PATH
+fi
+
 #if [ -d /usr/local/bin  ]; then
 #    export PATH=/usr/local/bin:$PATH
 #fi
@@ -155,3 +159,10 @@ unset bash bmajor bminor
 if [ -f ~/.bash_completion.d ] ; then
     . ~/.bash_completion.d/rake.sh
 fi
+
+PERL_MB_OPT="--install_base \"/Users/fklock/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/Users/fklock/perl5"; export PERL_MM_OPT;
+
+# Set locale so that Octopress does not get upset about non-ASCII text in my posts.
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
