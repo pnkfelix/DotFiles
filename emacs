@@ -146,7 +146,7 @@
  '(rcirc-server-alist
    (quote
     (("irc.mozilla.org" :nick "pnkfelix" :port 6697 :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels
-      ("#rust-fr" "#rust" "#rust-internals" "#rust-bots" "#rustc" "#rust-libs" "#research" "#pjs" "#ionmonkey" "#jsapi" "#js" "#jslang" "#developers" "#devtools" "#introduction" "#lagaule")
+      ("#rust-fr" "#rust" "#rust-internals" "#rust-bots" "#rustc" "#rust-lang" "#rust-libs" "#rust-unregistered" "#research" "#developers" "#devtools" "#introduction" "#lagaule")
       :encryption tls)
      ("irc.freenode.net" :nick "pnkfelix" :user-name "pnkfelix" :full-name "Felix S. Klock II" :channels
       ("#rcirc" "#scheme" "#emacs")
@@ -773,6 +773,8 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/markdown-mode")
 (require 'markdown-mode)
 
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
 ;; See https://github.com/holtzermann17/linepad
 ;(add-to-list 'load-path "~/ConfigFiles/Elisp/linepad")
 ;(require 'linepad)
@@ -1015,7 +1017,8 @@ necessarily running."
 (defun terminal-notify (msg &optional title subtitle group)
   "Sends a message to the Mac OS X message center"
   (cond
-   ((executable-find "terminal-notify")
+   ((or (executable-find "terminal-notify")
+        (executable-find "terminal-notifier"))
     (let ((infile nil)
           (buffer "*terminal-notifier*")
           (display t))
@@ -1227,3 +1230,12 @@ See also `yank' (\\[yank])."
 (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-python)
 (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-rust)
 (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-rust-code)
+
+(defun average (&rest l) (/ (apply '+ l) (length l)))
+
+(defun ediff-moz-master ()
+  (interactive)
+  (let ((file (ediff-get-default-file-name))
+        (rev1 "moz-master")
+        (rev2 ""))
+    (ediff-vc-internal rev1 rev2 nil)))
