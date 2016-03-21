@@ -108,8 +108,6 @@
 ;; too ugly?  and besides, I don't have it on all my machines (yet).
 ;(require 'actionscript-mode)
 
-(require 'gud)
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -871,17 +869,6 @@ necessarily running."
 
 (add-hook 'server-switch-hook 'install-emacsclient-wrapped-kill-buffer)
 
-(defun gud-pjs (command-line)
-  "Wrapper around gud-gdb that runs firefox using my pjs-alpha profile."
-  ;; --P pjs-alpha
-  (interactive (list (gud-query-cmdline 'gud-gdb)))
-  (let ((new-command-line
-         (cond ((string-match " --args " command-line)
-                (concat command-line " -P pjs-alpha"))
-               (t
-                (concat command-line " --args firefox -P pjs-alpha")))))
-    (gud-gdb new-command-line)))
-
 ;; http://www.emacswiki.org/emacs/AnsiColor
 ;; Note many programs won't emit color codes, because M-x shell sets
 ;; TERM to "dumb"; use e.g. TERM=xterm-color on case-by-case basis.
@@ -1129,7 +1116,9 @@ See also `yank' (\\[yank])."
          ;; (call-interactively 'dired)
          (dired worklog-directory))
 
-       (split-window-below)
+       (cond ((boundp 'split-window-below) (split-window-below))
+             ((boundp 'split-window-vertically) (split-window-vertically)))
+
        (let ((s (shell "*worklog*")))
          (comint-send-string s "make update\n")
          s)
@@ -1173,22 +1162,27 @@ See also `yank' (\\[yank])."
 
        t))
 
-(require 'flycheck)
-(flycheck-define-checker servo-rust
-  "A Rust syntax checker using the Rust compiler in Servo."
-  :command ("rustc"
-            "-L/Users/fklock/Dev/Rust/rust-sdl/objdir-opt"
-            "-L/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/lib"
-            "-C" "link-args=\" -I/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/include/SDL -framework CoreFoundation -framework CoreGraphics -framework AppKit /Users/fklock/Dev/Rust/rust-sdl/SDL-mirror/src/main/macosx/SDLMain.m  \""
-            "--parse-only"
-            source)
-  :error-patterns
-  ((error line-start (file-name) ":" line ":" column ": "
-          (one-or-more digit) ":" (one-or-more digit) " error: "
-          (message) line-end))
-  :modes rust-mode)
+;; Maybe interesting but causing startup errors, so no.
+(cond
+ (nil
+  (require 'flycheck)
+  (flycheck-define-checker
+   servo-rust
+   "A Rust syntax checker using the Rust compiler in Servo."
+   :command ("rustc"
+             "-L/Users/fklock/Dev/Rust/rust-sdl/objdir-opt"
+             "-L/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/lib"
+             "-C" "link-args=\" -I/Users/fklock/opt/sdl-release-1.2.15-dbg-nopt/include/SDL -framework CoreFoundation -framework CoreGraphics -framework AppKit /Users/fklock/Dev/Rust/rust-sdl/SDL-mirror/src/main/macosx/SDLMain.m  \""
+             "--parse-only"
+             source)
+   :error-patterns
+   ((error line-start (file-name) ":" line ":" column ": "
+           (one-or-more digit) ":" (one-or-more digit) " error: "
+           (message) line-end))
+   :modes rust-mode)
 
-(add-hook 'rust-mode-hook (lambda () (flycheck-select-checker 'servo-rust)))
+  (add-hook 'rust-mode-hook (lambda () (flycheck-select-checker 'servo-rust)))
+  ))
 
 ;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
 ;; http://www.youtube.com/watch?v=87tjF_mYvpE
