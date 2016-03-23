@@ -160,6 +160,13 @@ if [ -f ~/.bash_completion.d ] ; then
     . ~/.bash_completion.d/rake.sh
 fi
 
+PERL_MB_OPT="--install_base \"/Users/fklock/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/Users/fklock/perl5"; export PERL_MM_OPT;
+
+# Set locale so that Octopress does not get upset about non-ASCII text in my posts.
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
 # if there are machine-private settings (e.g. experimental
 # or secret things I do not want in a public repo), then they
 # can go into ~/.bashrc_private
@@ -194,4 +201,3 @@ fi
 if [ -f ~/.bashrc_private ]; then
     source ~/.bashrc_private
 fi
-
