@@ -732,8 +732,12 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
        ; (color-theme-arjen)
        (color-theme-tty-dark)
        )
-      (t
+      ((memq window-system '(mac ns))
        (load-theme 'solarized-dark t)
+       )
+      (nil ;; desparately trying to find a reliable theme for use in a ssh-ptty
+       (color-theme-initialize)
+       (color-theme-jsc-light2)
        ))
 
 
