@@ -1019,7 +1019,7 @@ necessarily running."
 (when (memq window-system '(mac ns))
   (add-to-list 'compilation-finish-functions 'say-when-compilation-finished))
 
-(require 'rcirc-notify)
+; (require 'rcirc-notify)
 
 (defun yank-removing-newlines ()
   "Yanks the last stretch of killed text, removing newlines.
@@ -1027,8 +1027,8 @@ See also `yank' (\\[yank])."
   (interactive)
   (insert-for-yank (replace-regexp-in-string "\n" "" (current-kill 0))))
 
-(eval-after-load 'rcirc '(require 'rcirc-notify))
-(eval-after-load 'rcirc '(require 'rcirc-color))
+;(eval-after-load 'rcirc '(require 'rcirc-notify))
+;(eval-after-load 'rcirc '(require 'rcirc-color))
 
 (require 'growl)
 
