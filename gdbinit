@@ -11,5 +11,7 @@ set auto-load local-gdbinit
 # eventually)
 add-auto-load-safe-path ~/Dev
 
+# add-auto-load-safe-path ~/Dev/Mozilla/rust-issue27401/src/etc/gdb_load_rust_pretty_printers.py
+
 # Woo!  Did not know about this before!
 set disassembly-flavor intel
