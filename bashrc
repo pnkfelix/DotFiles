@@ -36,6 +36,10 @@ if [ -d ~/.gem/ruby/1.8/bin ]; then
     export PATH=~/.gem/ruby/1.8/bin:$PATH
 fi
 
+if [ -d ~/.cabal/bin  ]; then
+   export PATH=~/.cabal/bin:$PATH
+fi
+
 #if [ -d /usr/local/bin  ]; then
 #    export PATH=/usr/local/bin:$PATH
 #fi
@@ -154,4 +158,46 @@ unset bash bmajor bminor
 
 if [ -f ~/.bash_completion.d ] ; then
     . ~/.bash_completion.d/rake.sh
+fi
+
+PERL_MB_OPT="--install_base \"/Users/fklock/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/Users/fklock/perl5"; export PERL_MM_OPT;
+
+# Set locale so that Octopress does not get upset about non-ASCII text in my posts.
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+# if there are machine-private settings (e.g. experimental
+# or secret things I do not want in a public repo), then they
+# can go into ~/.bashrc_private
+#
+# The concrete example that I want to document here: I want to
+# map CapsLock to Ctrl when I login at the console, but I do
+# not want to do it via /etc/vconsole.conf because I have found
+# that too risky (namely when I accidentally corrupt the keymap,
+# I want to be able to login as root via a conservative keymap
+# after a reboot). So the solution I have adopted is:
+#
+# 1. Make a script `~/bin/ctrlcaps`:
+# ```
+# #!/bin/sh
+# 
+# loadkeys <<EOF
+# keymaps 0-2,4-6,8-9,12
+# keycode 58 = Control
+# EOF
+# ```
+#
+# 2. Give above root privileges `/etc/sudoers.d/11-allow-fsk-ctrlcaps`:
+# ```
+# pnkfelix ALL = (root) NOPASSWD: /home/pnkfelix/bin/ctrlcaps
+# ```
+#
+# 3. Do sudo'ed invocation on login, `~/.bash_private`:
+# ```
+# sudo ctrlcaps
+# ```
+
+if [ -f ~/.bashrc_private ]; then
+    source ~/.bashrc_private
 fi
