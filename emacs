@@ -1,4 +1,6 @@
 ;; -*- mode: emacs-lisp; indent-tabs-mode: nil -*-
+(setq start-time (float-time))
+
 (let ((emacs-priv (concat (getenv "HOME") "/.emacs_private")))
   (cond ((file-exists-p emacs-priv)
          (load emacs-priv))))
@@ -97,6 +99,8 @@
 ;;;; (autoload 'srecode/m3 "~/ConfigFiles/Elisp/cedet/lisp/cedet/srecode/m3.el")
 ;;;; (load-file "~/ConfigFiles/Elisp/cedet/lisp/cedet/srecode/loaddefs.el")
 ;; gave up, just turned off srecode minor mode below
+
+(setq time-103 (- (float-time) start-time))
 
 (require 'whitespace)
 (require 'uniquify)
@@ -199,6 +203,9 @@
         (newline-mark ?\n [?$ ?\n]) 
         (tab-mark ?\t [?\u00BB ?\t])))
 
+(setq time-206 (- (float-time) start-time))
+
+
 (defvar my-fullscreen-p t "Check if fullscreen is on or off")
 (defun my-toggle-fullscreen ()
   (interactive)
@@ -288,6 +295,9 @@
 (defun extract-subsequence (start-marker end-marker l)
   "Produces subsequence exclusively bounded by start and end markers"
   (until-drop start-marker (until-take end-marker l)))
+
+
+(setq time-300 (- (float-time) start-time))
 
 ;; remove-spaces-and-active-marker : String -> String
 (defun remove-spaces-and-active-marker (line)
@@ -399,6 +409,8 @@
                       )))))
   (xcodebuild-impl proj archs cfg tgt cmds))
 
+(setq time-412 (- (float-time) start-time))
+
 (defun xcodebuild-impl (proj archs cfg tgt cmds)
   (let ((archs-arg (concat " ONLY_ACTIVE_ARCH=NO ARCHS=\"" archs "\""))
         (cfg-arg (concat " -configuration " cfg))
@@ -486,6 +498,8 @@ If the optional argument `edit-command' is non-nil, the command can be edited."
     (turn-off-word-wrap) ;(setq word-wrap nil)
   )
 
+(setq time-501 (- (float-time) start-time))
+
 ;; In Emacs defaults, .st is used for ESS Transcript files, but
 ;; Tamarin uses the extension for Selftest (preprocessor generating C++)
 (add-to-list 'auto-mode-alist '("\\.st\\'" . c++-mode))
@@ -570,6 +584,8 @@ Optional arg REVISION is a revision to annotate from."
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
+
+(setq time-588 (- (float-time) start-time))
 
 ;; All of the below is for Windows only; want to conditionally run it
 (cond
@@ -669,6 +685,8 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
                         (message "Partially completed")))))))
       success))
   ))
+
+(setq time-689 (- (float-time) start-time))
 
 (defun kill-emacs-signal-error ()
   (interactive)
@@ -779,6 +797,8 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 (defadvice ediff-quit (after edit-after-quit-hooks activate)
   (run-hooks 'ediff-after-quit-hooks))
 
+(setq time-800 (- (float-time) start-time))
+
 (setq git-mergetool-emacsclient-ediff-active nil)
 
 (defun local-ediff-frame-maximize ()
@@ -879,13 +899,15 @@ necessarily running."
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
+(setq time-902 (- (float-time) start-time))
+
 ;; https://github.com/victorhge/iedit
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/iedit")
 (require 'iedit)
 
 ;; https://github.com/technomancy/clojure-mode
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/clojure-mode")
-(require 'clojure-mode)
+;(require 'clojure-mode)
 
 ;; https://github.com/rolandwalker/unicode-fonts
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/unicode-fonts")
@@ -893,12 +915,13 @@ necessarily running."
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/ucs-utils")
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/persistent-soft")
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/pcache")
-(require 'persistent-soft) ; be ready to disable this...
+;(require 'persistent-soft) ; be ready to disable this...
 
 (defun fsk-unicode-support ()
   "Loads the unicode support code and sets it up.  Not run on startup due to slowness."
   (interactive)
   (progn
+    (require 'persistent-soft)
     (require 'ucs-utils)
     (require 'font-utils)
     (require 'unicode-fonts)
@@ -977,6 +1000,8 @@ necessarily running."
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
+
+(setq time-1003 (- (float-time) start-time))
 
 (when (not package-archive-contents)
   (package-refresh-contents))
@@ -1075,6 +1100,8 @@ See also `yank' (\\[yank])."
        (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
        (ac-config-default)))
 
+(setq time-1102 (- (float-time) start-time))
+
 ;; Keep this at the end of the initialization file.
 (defvar worklog-directory "~/Documents/WorkLog")
 (cond (emacs-is-felixs-worklog
@@ -1141,3 +1168,20 @@ See also `yank' (\\[yank])."
 
 (require 'guide-key)
 (setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
+
+(setq total-time (- (float-time) start-time))
+
+(message "Done loading .emacs %s"
+         `((time-103 ,time-103)
+           (time-206 ,time-206)
+           (time-300 ,time-300)
+           (time-412 ,time-412)
+           (time-501 ,time-501)
+           (time-588 ,time-588)
+           (time-689 ,time-689)
+           (time-800 ,time-800)
+           (time-902 ,time-902)
+           (time-1003 ,time-1003)
+           (time-1102 ,time-1102)))
+         
+(message "Done loading .emacs %s" total-time)
