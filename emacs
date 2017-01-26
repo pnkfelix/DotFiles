@@ -907,11 +907,11 @@ necessarily running."
 (require 'multiple-cursors)
 
 ;; Adds a cursor to each line in an active region.
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C-c C-c") 'mc/edit-lines)
 
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(global-set-key (kbd "C-c C-n") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-c C-p") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-a") 'mc/mark-all-like-this)
 
 (setq time-902 (- (float-time) start-time))
 
