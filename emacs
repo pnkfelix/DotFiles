@@ -87,8 +87,8 @@
 ;; Interational .. Coding Systems
 
 
-(defvar fsk-use-cedet t)
-
+(defvar fsk-use-cedet nil)
+ 
 ;; http://cedet.sourceforge.net/setup.shtml
 (when (and fsk-use-cedet  (not (featurep 'cedet-devel-load)))
   (load "~/ConfigFiles/Elisp/cedet/cedet-devel-load.el"))
@@ -1020,10 +1020,10 @@ necessarily running."
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(unless (package-installed-p 'scala-mode2)
-  (package-refresh-contents) (package-install 'scala-mode2))
-(unless (package-installed-p 'sbt-mode)
-  (package-refresh-contents) (package-install 'sbt-mode))
+;; (unless (package-installed-p 'scala-mode2)
+;;  (package-refresh-contents) (package-install 'scala-mode2))
+;; (unless (package-installed-p 'sbt-mode)
+;;   (package-refresh-contents) (package-install 'sbt-mode))
 
 (defun say-hello ()
   "Sends a hello message to the Mac OS X message center"
