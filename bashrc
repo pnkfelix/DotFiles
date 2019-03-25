@@ -62,7 +62,9 @@ fi
 # For non-homebrew python (2.x), you need to amend your PYTHONPATH like so:
 export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
 
-export PKG_CONFIG_PATH=$(find "$HOME/opt" -name pkgconfig | xargs | sed -e 's@ @/:@g')
+if [ -f "$HOME/opt" ] ; then
+    export PKG_CONFIG_PATH=$(find "$HOME/opt" -name pkgconfig | xargs | sed -e 's@ @/:@g')
+fi
 
 ### Inspired by a verbose prompt shown at:
 

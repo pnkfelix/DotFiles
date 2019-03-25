@@ -1,4 +1,6 @@
 ;; -*- mode: emacs-lisp; indent-tabs-mode: nil -*-
+(setq start-time (float-time))
+
 (let ((emacs-priv (concat (getenv "HOME") "/.emacs_private")))
   (cond ((file-exists-p emacs-priv)
          (load emacs-priv))))
@@ -103,8 +105,16 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
 ;; Interational .. Coding Systems
 
 
+<<<<<<< HEAD
 (defvar fsk-use-cedet nil)
 
+||||||| merged common ancestors
+(defvar fsk-use-cedet t)
+
+=======
+(defvar fsk-use-cedet nil)
+ 
+>>>>>>> d41cbb1010e1962d1d103a5606e9d9a2e9023c98
 ;; http://cedet.sourceforge.net/setup.shtml
 (when (and fsk-use-cedet  (not (featurep 'cedet-devel-load)))
   (load "~/ConfigFiles/Elisp/cedet/cedet-devel-load.el"))
@@ -115,6 +125,8 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
 ;;;; (autoload 'srecode/m3 "~/ConfigFiles/Elisp/cedet/lisp/cedet/srecode/m3.el")
 ;;;; (load-file "~/ConfigFiles/Elisp/cedet/lisp/cedet/srecode/loaddefs.el")
 ;; gave up, just turned off srecode minor mode below
+
+(setq time-103 (- (float-time) start-time))
 
 (require 'whitespace)
 (require 'uniquify)
@@ -233,6 +245,9 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
         (newline-mark ?\n [?$ ?\n]) 
         (tab-mark ?\t [?\u00BB ?\t])))
 
+(setq time-206 (- (float-time) start-time))
+
+
 (defvar my-fullscreen-p t "Check if fullscreen is on or off")
 (defun my-toggle-fullscreen ()
   (interactive)
@@ -322,6 +337,9 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
 (defun extract-subsequence (start-marker end-marker l)
   "Produces subsequence exclusively bounded by start and end markers"
   (until-drop start-marker (until-take end-marker l)))
+
+
+(setq time-300 (- (float-time) start-time))
 
 ;; remove-spaces-and-active-marker : String -> String
 (defun remove-spaces-and-active-marker (line)
@@ -433,6 +451,8 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
                       )))))
   (xcodebuild-impl proj archs cfg tgt cmds))
 
+(setq time-412 (- (float-time) start-time))
+
 (defun xcodebuild-impl (proj archs cfg tgt cmds)
   (let ((archs-arg (concat " ONLY_ACTIVE_ARCH=NO ARCHS=\"" archs "\""))
         (cfg-arg (concat " -configuration " cfg))
@@ -520,6 +540,8 @@ If the optional argument `edit-command' is non-nil, the command can be edited."
     (turn-off-word-wrap) ;(setq word-wrap nil)
   )
 
+(setq time-501 (- (float-time) start-time))
+
 ;; In Emacs defaults, .st is used for ESS Transcript files, but
 ;; Tamarin uses the extension for Selftest (preprocessor generating C++)
 (add-to-list 'auto-mode-alist '("\\.st\\'" . c++-mode))
@@ -604,6 +626,8 @@ Optional arg REVISION is a revision to annotate from."
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
+
+(setq time-588 (- (float-time) start-time))
 
 ;; All of the below is for Windows only; want to conditionally run it
 (cond
@@ -704,6 +728,8 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
       success))
   ))
 
+(setq time-689 (- (float-time) start-time))
+
 (defun kill-emacs-signal-error ()
   (interactive)
   (kill-emacs 1))
@@ -766,8 +792,12 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
        ; (color-theme-arjen)
        (color-theme-tty-dark)
        )
-      (t
+      ((memq window-system '(mac ns))
        (load-theme 'solarized-dark t)
+       )
+      (nil ;; desparately trying to find a reliable theme for use in a ssh-ptty
+       (color-theme-initialize)
+       (color-theme-jsc-light2)
        ))
 
 
@@ -814,6 +844,8 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 
 (defadvice ediff-quit (after edit-after-quit-hooks activate)
   (run-hooks 'ediff-after-quit-hooks))
+
+(setq time-800 (- (float-time) start-time))
 
 (setq git-mergetool-emacsclient-ediff-active nil)
 
@@ -909,11 +941,13 @@ necessarily running."
 (require 'multiple-cursors)
 
 ;; Adds a cursor to each line in an active region.
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C-c C-c") 'mc/edit-lines)
 
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(global-set-key (kbd "C-c C-n") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-c C-p") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-a") 'mc/mark-all-like-this)
+
+(setq time-902 (- (float-time) start-time))
 
 ;; ;; https://github.com/victorhge/iedit
 ;; ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/iedit")
@@ -921,7 +955,7 @@ necessarily running."
 
 ;; https://github.com/technomancy/clojure-mode
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/clojure-mode")
-(require 'clojure-mode)
+;(require 'clojure-mode)
 
 ;; https://github.com/rolandwalker/unicode-fonts
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/unicode-fonts")
@@ -929,12 +963,13 @@ necessarily running."
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/ucs-utils")
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/persistent-soft")
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/pcache")
-(require 'persistent-soft) ; be ready to disable this...
+;(require 'persistent-soft) ; be ready to disable this...
 
 (defun fsk-unicode-support ()
   "Loads the unicode support code and sets it up.  Not run on startup due to slowness."
   (interactive)
   (progn
+    (require 'persistent-soft)
     (require 'ucs-utils)
     (require 'font-utils)
     (require 'unicode-fonts)
@@ -1014,13 +1049,15 @@ necessarily running."
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
 
+(setq time-1003 (- (float-time) start-time))
+
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(unless (package-installed-p 'scala-mode2)
-  (package-refresh-contents) (package-install 'scala-mode2))
-(unless (package-installed-p 'sbt-mode)
-  (package-refresh-contents) (package-install 'sbt-mode))
+;; (unless (package-installed-p 'scala-mode2)
+;;  (package-refresh-contents) (package-install 'scala-mode2))
+;; (unless (package-installed-p 'sbt-mode)
+;;   (package-refresh-contents) (package-install 'sbt-mode))
 
 (defun say-hello ()
   "Sends a hello message to the Mac OS X message center"
@@ -1062,8 +1099,8 @@ See also `yank' (\\[yank])."
   (interactive)
   (insert-for-yank (replace-regexp-in-string "\n" "" (current-kill 0))))
 
-(eval-after-load 'rcirc '(require 'rcirc-notify))
-(eval-after-load 'rcirc '(require 'rcirc-color))
+;(eval-after-load 'rcirc '(require 'rcirc-notify))
+;(eval-after-load 'rcirc '(require 'rcirc-color))
 
 ;; This lists hidden buffers with activity in the modeline
 (eval-after-load 'rcirc '(rcirc-track-minor-mode 1))
@@ -1130,6 +1167,8 @@ See also `yank' (\\[yank])."
 ;;        (require 'auto-complete-config)
 ;;        (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 ;;        (ac-config-default)))
+
+(setq time-1102 (- (float-time) start-time))
 
 ;; Keep this at the end of the initialization file.
 (defvar worklog-directory "~/Documents/WorkLog")
@@ -1286,3 +1325,20 @@ from the list of completions and default values."
                          icomplete-with-completion-tables))))
       (read-buffer prompt (other-buffer (current-buffer) read-buffer-visible-ok)
                    (confirm-nonexistent-file-or-buffer)))))
+
+(setq total-time (- (float-time) start-time))
+
+(message "Done loading .emacs %s"
+         `((time-103 ,time-103)
+           (time-206 ,time-206)
+           (time-300 ,time-300)
+           (time-412 ,time-412)
+           (time-501 ,time-501)
+           (time-588 ,time-588)
+           (time-689 ,time-689)
+           (time-800 ,time-800)
+           (time-902 ,time-902)
+           (time-1003 ,time-1003)
+           (time-1102 ,time-1102)))
+         
+(message "Done loading .emacs %s" total-time)

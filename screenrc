@@ -1,0 +1,12 @@
+# Change escape character to C-z
+escape "^Zz"
+
+# unbind ctrl-s from xoff in order to be able to search in emacs
+bind s
+bind ^S
+
+# unbind ctrl-x from lockscreen in order to be able to save in emacs
+bind x
+bind ^X
+
+term screen-256color
