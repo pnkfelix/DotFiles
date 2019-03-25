@@ -105,16 +105,8 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
 ;; Interational .. Coding Systems
 
 
-<<<<<<< HEAD
-(defvar fsk-use-cedet nil)
-
-||||||| merged common ancestors
-(defvar fsk-use-cedet t)
-
-=======
 (defvar fsk-use-cedet nil)
  
->>>>>>> d41cbb1010e1962d1d103a5606e9d9a2e9023c98
 ;; http://cedet.sourceforge.net/setup.shtml
 (when (and fsk-use-cedet  (not (featurep 'cedet-devel-load)))
   (load "~/ConfigFiles/Elisp/cedet/cedet-devel-load.el"))
