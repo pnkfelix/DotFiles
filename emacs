@@ -3,6 +3,24 @@
   (cond ((file-exists-p emacs-priv)
          (load emacs-priv))))
 
+;; Give into the tyranny of the majority.
+(setq sentence-end-double-space nil)
+
+;; Note: this does not yet seem to work as I had expected it to.
+;; See also https://stackoverflow.com/questions/637351/emacs-how-to-delete-text-without-kill-ring/8887741#comment84616397_8887741
+(defun ruthlessly-kill-line (&optional arg)
+  "Delete the rest of the current line; if there are no nonblanks there, delete thru newline.
+With prefix argument ARG, delete that many lines from point.
+Negative arguments delete lines backward.
+With zero argument, deletes the text before point on the current line.
+
+This is just like `kill-line' but it restores the kill-ring to its prior state."
+  (interactive "P")
+  (kill-line arg)
+  (current-kill 1))
+
+;; (global-set-key (kbd "C-S-k") 'ruthlessly-kill-line)
+
 (defun filter (pred lst)
   (let (accum)
     (dolist (element lst accum)
@@ -26,8 +44,8 @@
 (defun init--install-packages ()
   (packages-install
    '(flx
-     flx-ido
-     ido-vertical-mode
+     ;flx-ido
+     ;ido-vertical-mode
      guide-key
      )))
 
@@ -85,7 +103,7 @@
 ;; Interational .. Coding Systems
 
 
-(defvar fsk-use-cedet t)
+(defvar fsk-use-cedet nil)
 
 ;; http://cedet.sourceforge.net/setup.shtml
 (when (and fsk-use-cedet  (not (featurep 'cedet-devel-load)))
@@ -123,6 +141,9 @@
  '(comint-completion-fignore nil)
  '(comint-password-prompt-regexp
    "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|Repeat\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +\\)\\(?:Pass\\(?: phrase\\|phrase\\|word\\)\\|Response\\|pass\\(?: phrase\\|phrase\\|word\\)\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: for \\(?:'[^']*'\\|[^:]+\\)\\)?:\\s *\\'")
+ '(compilation-search-path
+   (quote
+    (nil "/Users/fklock/Dev/Mozilla/issue54570/rust-54570/src")))
  '(compile-command "infer-remake.sh")
  '(completion-ignored-extensions
    (quote
@@ -140,6 +161,9 @@
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
  '(my-rcirc-notify-timeout 5)
+ '(package-selected-packages
+   (quote
+    (eglot flycheck sbt-mode ido-vertical-mode guide-key flx-ido f)))
  '(rcirc-log-flag t)
  '(rcirc-server-alist
    (quote
@@ -174,6 +198,8 @@
  '(org-clock-overlay ((t (:background "SkyBlue4" :foreground "black"))))
  '(org-column ((t (:background "grey90" :foreground "black" :strike-through nil :underline nil :slant normal :weight normal :height 120 :family "Monaco"))))
  '(org-column-title ((t (:background "grey30" :foreground "black" :underline t :weight bold))))
+ '(smerge-base ((t (:background "saddle brown"))))
+ '(smerge-refined-added ((t (:inherit smerge-refined-change :background "dark green"))))
  '(whitespace-line ((t (:background "alice blue"))))
  '(whitespace-tab ((t (:background "light goldenrod" :foreground "lightgray")))))
 
@@ -889,9 +915,9 @@ necessarily running."
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
-;; https://github.com/victorhge/iedit
-;; (add-to-list 'load-path "~/ConfigFiles/Elisp/iedit")
-(require 'iedit)
+;; ;; https://github.com/victorhge/iedit
+;; ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/iedit")
+;; (require 'iedit)
 
 ;; https://github.com/technomancy/clojure-mode
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/clojure-mode")
@@ -1184,18 +1210,18 @@ See also `yank' (\\[yank])."
   (add-hook 'rust-mode-hook (lambda () (flycheck-select-checker 'servo-rust)))
   ))
 
-;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
-;; http://www.youtube.com/watch?v=87tjF_mYvpE
-(require 'ido)
-(ido-mode t)
+;; ;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
+;; ;; http://www.youtube.com/watch?v=87tjF_mYvpE
+;; (require 'ido)
+;; (ido-mode t)
 
-(require 'flx-ido)
-(flx-ido-mode 1)
-;; disable ido faces to see flx highlights
-(setq ido-use-faces nil)
+;; (require 'flx-ido)
+;; (flx-ido-mode 1)
+;; ;; disable ido faces to see flx highlights
+;; (setq ido-use-faces nil)
 
-(require 'ido-vertical-mode)
-(ido-vertical-mode)
+;; (require 'ido-vertical-mode)
+;; (ido-vertical-mode)
 
 (require 'guide-key)
 (setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
@@ -1233,3 +1259,30 @@ See also `yank' (\\[yank])."
         (rev1 "moz-master")
         (rev2 ""))
     (ediff-vc-internal rev1 rev2 nil)))
+
+(defvar read-buffer-visible-ok nil
+  "Control whether the switch-to-buffer prompt will prefer non-visible windows.")
+
+;; Hacked version of code from window.el.gz
+(defun read-buffer-to-switch (prompt)
+  "Read the name of a buffer to switch to, prompting with PROMPT.
+Return the name of the buffer as a string.
+
+This function is intended for the `switch-to-buffer' family of
+commands since these need to omit the name of the current buffer
+from the list of completions and default values."
+  (let ((rbts-completion-table (internal-complete-buffer-except)))
+    (minibuffer-with-setup-hook
+        (lambda ()
+          (setq minibuffer-completion-table rbts-completion-table)
+          ;; Since rbts-completion-table is built dynamically, we
+          ;; can't just add it to the default value of
+          ;; icomplete-with-completion-tables, so we add it
+          ;; here manually.
+          (if (and (boundp 'icomplete-with-completion-tables)
+                   (listp icomplete-with-completion-tables))
+              (set (make-local-variable 'icomplete-with-completion-tables)
+                   (cons rbts-completion-table
+                         icomplete-with-completion-tables))))
+      (read-buffer prompt (other-buffer (current-buffer) read-buffer-visible-ok)
+                   (confirm-nonexistent-file-or-buffer)))))
