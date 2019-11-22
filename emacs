@@ -38,6 +38,19 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
                           (lambda (x) (not (= (aref x 0) (aref "." 0))))
                           (directory-files "~/ConfigFiles/Elisp/")))))
 
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
 ;;;;; Trying to move to straight.el
 ;;
 ;; ;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
@@ -168,9 +181,6 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
  '(my-rcirc-notify-timeout 5)
- '(package-selected-packages
-   (quote
-    (emacs-lsp eglot flycheck sbt-mode ido-vertical-mode guide-key flx-ido f)))
  '(rcirc-log-flag t)
  '(rcirc-server-alist
    (quote
