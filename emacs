@@ -38,24 +38,26 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
                           (lambda (x) (not (= (aref x 0) (aref "." 0))))
                           (directory-files "~/ConfigFiles/Elisp/")))))
 
-;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
-;; http://www.youtube.com/watch?v=87tjF_mYvpE
+;;;;; Trying to move to straight.el
 ;;
-;; This is a way to 
-(require 'setup-package)
-(defun init--install-packages ()
-  (packages-install
-   '(flx
-     ;flx-ido
-     ;ido-vertical-mode
-     guide-key
-     )))
-
-(condition-case nil
-    (init--install-packages)
-  (error
-   (package-refresh-contents)
-   (init--install-packages)))
+;; ;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
+;; ;; http://www.youtube.com/watch?v=87tjF_mYvpE
+;; ;;
+;; ;; This is a way to 
+;; (require 'setup-package)
+;; (defun init--install-packages ()
+;;   (packages-install
+;;    '(flx
+;;      ;flx-ido
+;;      ;ido-vertical-mode
+;;      guide-key
+;;      )))
+;; 
+;; (condition-case nil
+;;     (init--install-packages)
+;;   (error
+;;    (package-refresh-contents)
+;;    (init--install-packages)))
 
 (defun ormap (pred lst)
   (let (accum)
@@ -135,6 +137,7 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ack-command "rg")
  '(background-color "#042028")
  '(background-mode dark)
  '(circe-network-options
@@ -167,7 +170,7 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
  '(my-rcirc-notify-timeout 5)
  '(package-selected-packages
    (quote
-    (eglot flycheck sbt-mode ido-vertical-mode guide-key flx-ido f)))
+    (emacs-lsp eglot flycheck sbt-mode ido-vertical-mode guide-key flx-ido f)))
  '(rcirc-log-flag t)
  '(rcirc-server-alist
    (quote
@@ -1033,23 +1036,23 @@ necessarily running."
                          (1 . let*)
                          )))
 
-(require 'package)
-(add-to-list 'package-archives
-             '("marmalade" .
-               "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(package-initialize)
-
-(setq time-1003 (- (float-time) start-time))
-
-(when (not package-archive-contents)
-  (package-refresh-contents))
-
-;; (unless (package-installed-p 'scala-mode2)
-;;  (package-refresh-contents) (package-install 'scala-mode2))
-;; (unless (package-installed-p 'sbt-mode)
-;;   (package-refresh-contents) (package-install 'sbt-mode))
+;;;;; Trying to move to straight.el now
+;;
+;; (require 'package)
+;; ;(add-to-list 'package-archives
+;; ;             '("marmalade" .
+;; ;               "http://marmalade-repo.org/packages/"))
+;; (add-to-list 'package-archives
+;;              '("melpa" . "http://melpa.milkbox.net/packages/") t)
+;; (package-initialize)
+;;
+;; (when (not package-archive-contents)
+;;   (package-refresh-contents))
+;;
+;; ;; (unless (package-installed-p 'scala-mode2)
+;; ;;  (package-refresh-contents) (package-install 'scala-mode2))
+;; ;; (unless (package-installed-p 'sbt-mode)
+;; ;;   (package-refresh-contents) (package-install 'sbt-mode))
 
 (defun say-hello ()
   "Sends a hello message to the Mac OS X message center"
@@ -1254,8 +1257,10 @@ See also `yank' (\\[yank])."
 ;; (require 'ido-vertical-mode)
 ;; (ido-vertical-mode)
 
-(require 'guide-key)
-(setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
+;;;;; During shift to straight.el, removing anything I don't remember adding.
+;;
+;; (require 'guide-key)
+;; (setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
 
 (require 'mmm-mode)
  
@@ -1330,7 +1335,6 @@ from the list of completions and default values."
            (time-689 ,time-689)
            (time-800 ,time-800)
            (time-902 ,time-902)
-           (time-1003 ,time-1003)
            (time-1102 ,time-1102)))
          
 (message "Done loading .emacs %s" total-time)
