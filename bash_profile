@@ -18,6 +18,11 @@ fi
 
 stty -ixon -ixoff
 
+# Adds rustup-installed binaries to PATH
+if [ -f ~/.cargo/env ]; then
+   source ~/.cargo/env
+fi
+
 if [ -f ~/.bashrc ]; then
    source ~/.bashrc
 fi

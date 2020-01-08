@@ -19,6 +19,7 @@
 	remote-delete = push --delete
 	bz-diff = diff --no-color -U8 -C -M --patience
 	bz-patch = log --patch --no-color -U8 -C -M --patience -1
+	midpoint = "!sh -c 'NUM=`git log --pretty=%h $1 |wc -l`; NUM=`expr $NUM / 2`; if [ $NUM -gt 0 ]; then git show `git log --pretty=%h -n $NUM $1 |tail -1`; fi' - "
 [color]
 	ui=always
 [include]
@@ -27,3 +28,5 @@
 [core]
 	editor = $HOME/bin/emacsclient
 	excludesfile = ~/.gitignore_global
+[push]
+	default = simple

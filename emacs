@@ -5,6 +5,24 @@
   (cond ((file-exists-p emacs-priv)
          (load emacs-priv))))
 
+;; Give into the tyranny of the majority.
+(setq sentence-end-double-space nil)
+
+;; Note: this does not yet seem to work as I had expected it to.
+;; See also https://stackoverflow.com/questions/637351/emacs-how-to-delete-text-without-kill-ring/8887741#comment84616397_8887741
+(defun ruthlessly-kill-line (&optional arg)
+  "Delete the rest of the current line; if there are no nonblanks there, delete thru newline.
+With prefix argument ARG, delete that many lines from point.
+Negative arguments delete lines backward.
+With zero argument, deletes the text before point on the current line.
+
+This is just like `kill-line' but it restores the kill-ring to its prior state."
+  (interactive "P")
+  (kill-line arg)
+  (current-kill 1))
+
+;; (global-set-key (kbd "C-S-k") 'ruthlessly-kill-line)
+
 (defun filter (pred lst)
   (let (accum)
     (dolist (element lst accum)
@@ -20,24 +38,39 @@
                           (lambda (x) (not (= (aref x 0) (aref "." 0))))
                           (directory-files "~/ConfigFiles/Elisp/")))))
 
-;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
-;; http://www.youtube.com/watch?v=87tjF_mYvpE
-;;
-;; This is a way to 
-(require 'setup-package)
-(defun init--install-packages ()
-  (packages-install
-   '(flx
-     flx-ido
-     ido-vertical-mode
-     guide-key
-     )))
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-(condition-case nil
-    (init--install-packages)
-  (error
-   (package-refresh-contents)
-   (init--install-packages)))
+;;;;; Trying to move to straight.el
+;;
+;; ;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
+;; ;; http://www.youtube.com/watch?v=87tjF_mYvpE
+;; ;;
+;; ;; This is a way to 
+;; (require 'setup-package)
+;; (defun init--install-packages ()
+;;   (packages-install
+;;    '(flx
+;;      ;flx-ido
+;;      ;ido-vertical-mode
+;;      guide-key
+;;      )))
+;; 
+;; (condition-case nil
+;;     (init--install-packages)
+;;   (error
+;;    (package-refresh-contents)
+;;    (init--install-packages)))
 
 (defun ormap (pred lst)
   (let (accum)
@@ -102,13 +135,13 @@
 
 (setq time-103 (- (float-time) start-time))
 
-(require 'whitespace)
+(straight-use-package 'whitespace)
 (require 'uniquify)
 (require 'comint) ; so that I can override some its fcns below.
 
 ;; too slow
 ;(require 'js2-mode)
-(require 'javascript-mode)
+(straight-use-package 'javascript-mode)
 ;; too ugly?  and besides, I don't have it on all my machines (yet).
 ;(require 'actionscript-mode)
 
@@ -117,6 +150,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ack-command "rg")
  '(background-color "#042028")
  '(background-mode dark)
  '(circe-network-options
@@ -127,6 +161,9 @@
  '(comint-completion-fignore nil)
  '(comint-password-prompt-regexp
    "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|Repeat\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +\\)\\(?:Pass\\(?: phrase\\|phrase\\|word\\)\\|Response\\|pass\\(?: phrase\\|phrase\\|word\\)\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: for \\(?:'[^']*'\\|[^:]+\\)\\)?:\\s *\\'")
+ '(compilation-search-path
+   (quote
+    (nil "/Users/fklock/Dev/Mozilla/issue54570/rust-54570/src")))
  '(compile-command "infer-remake.sh")
  '(completion-ignored-extensions
    (quote
@@ -143,6 +180,7 @@
  '(js2-basic-offset 2)
  '(js2-bounce-indent-p t)
  '(line-move-visual nil)
+ '(lsp-rust-server (quote rust-analyzer))
  '(my-rcirc-notify-timeout 5)
  '(rcirc-log-flag t)
  '(rcirc-server-alist
@@ -178,6 +216,8 @@
  '(org-clock-overlay ((t (:background "SkyBlue4" :foreground "black"))))
  '(org-column ((t (:background "grey90" :foreground "black" :strike-through nil :underline nil :slant normal :weight normal :height 120 :family "Monaco"))))
  '(org-column-title ((t (:background "grey30" :foreground "black" :underline t :weight bold))))
+ '(smerge-base ((t (:background "saddle brown"))))
+ '(smerge-refined-added ((t (:inherit smerge-refined-change :background "dark green"))))
  '(whitespace-line ((t (:background "alice blue"))))
  '(whitespace-tab ((t (:background "light goldenrod" :foreground "lightgray")))))
 
@@ -524,7 +564,7 @@ If the optional argument `edit-command' is non-nil, the command can be edited."
 (setq font-lock-maximum-decoration
       '((c-mode . 2) (c++-mode . 2)))
 
-(require 'maxframe)
+(straight-use-package 'maxframe)
 
 ;(set-frame-height last-event-frame 120)
 ;(set-frame-height last-event-frame 50)
@@ -587,7 +627,7 @@ Optional arg REVISION is a revision to annotate from."
                  (when revision (concat "-r" revision))))
 
 ;; Org mode material
-(require 'org)
+(straight-use-package 'org)
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
@@ -713,9 +753,9 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 
 (keyboard-translate ?£ ?#)
 
-(require 'etags-select)
-(global-set-key "\M-?" 'etags-select-find-tag-at-point)
-(global-set-key "\M-." 'etags-select-find-tag)
+(straight-use-package 'etags-select)
+; (global-set-key "\M-?" 'etags-select-find-tag-at-point)
+; (global-set-key "\M-." 'etags-select-find-tag)
 
 (cond ((file-exists-p "~/ConfigFiles/Elisp/emacs-w3m/w3m-load.el")
        (require 'w3m-load)))
@@ -724,55 +764,56 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
        (require 'egg)))
 
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/ack-el")
-(require 'ack)
+(straight-use-package 'ack)
 (autoload 'pcomplete/ack "pcmpl-ack")
 (autoload 'pcomplete/ack-grep "pcmpl-ack")
 
 ;; Note that if this stops working, double-check the github
 ;; repo; e.g. frankpzh's pull request to clear PROMPT_COMMAND
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/emacs-bash-completion")
-(require 'bash-completion)
+(straight-use-package 'bash-completion)
 (bash-completion-setup)
 
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/exec-path-from-shell")
-(require 'exec-path-from-shell)
+(straight-use-package 'exec-path-from-shell)
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
 
-;; See: http://www.nongnu.org/color-theme/
-;; (add-to-list 'load-path "~/ConfigFiles/Elisp/color-theme-6.6.0")
-(require 'color-theme)
-;; See: http://ethanschoonover.com/solarized
+;; ;; See: http://www.nongnu.org/color-theme/
+;; ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/color-theme-6.6.0")
+;; (straight-use-package 'color-theme)
+(straight-use-package 'color-theme-modern)
+;; ;; See: http://ethanschoonover.com/solarized
 (add-to-list 'custom-theme-load-path "~/ConfigFiles/Elisp/emacs-color-theme-solarized")
-(cond (emacs-is-felixs-worklog
-       (load-theme 'solarized-light t))
-      (emacs-is-felixs-irc
-       (load-theme 'wombat t))
-      (emacs-is-twin
-       (color-theme-initialize)
-       ; (color-theme-arjen)
-       (color-theme-jsc-dark)
-       )
-      (emacs-is-red-twin
-       (color-theme-initialize)
-       ; (color-theme-arjen)
-       (color-theme-tty-dark)
-       )
-      ((memq window-system '(mac ns))
-       (load-theme 'solarized-dark t)
-       )
-      (nil ;; desparately trying to find a reliable theme for use in a ssh-ptty
-       (color-theme-initialize)
-       (color-theme-jsc-light2)
-       ))
-
+;; (cond (emacs-is-felixs-worklog
+;;        (load-theme 'solarized-light t))
+;;       (emacs-is-felixs-irc
+;;        (load-theme 'wombat t))
+;;       (emacs-is-twin
+;;        (color-theme-initialize)
+;;        ; (color-theme-arjen)
+;;        (color-theme-jsc-dark)
+;;        )
+;;       (emacs-is-red-twin
+;;        (color-theme-initialize)
+;;        ; (color-theme-arjen)
+;;        (color-theme-tty-dark)
+;;        )
+;;       ((memq window-system '(mac ns))
+;;        (load-theme 'solarized-dark t)
+;;        )
+;;       (nil ;; desparately trying to find a reliable theme for use in a ssh-ptty
+;;        (color-theme-initialize)p
+;;        (color-theme-jsc-light2)
+;;        ))
+(load-theme 'solarized-dark t)
 
 ;; http://code.google.com/p/js2-mode/wiki/InstallationInstructions
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
 ;; See http://js-comint-el.sourceforge.net/
-(require 'js-comint)
+(straight-use-package 'js-comint)
 (let ((wip-js "/Users/fklock/bin/js"))
   (cond ((file-exists-p wip-js)
          (setq inferior-js-program-command wip-js))))
@@ -787,11 +828,14 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 
 ;; See https://github.com/mozilla/rust/tree/master/src/etc/emacs
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/rust-mode")
-(require 'rust-mode)
+
+;; (straight-use-package 'rust-mode)
+(straight-use-package
+ '(rust-mode :type git :host github :repo "rust-lang/rust-mode"))
 
 ;; See git://jblevins.org/git/markdown-mode.git
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/markdown-mode")
-(require 'markdown-mode)
+(straight-use-package 'markdown-mode)
 
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
@@ -803,7 +847,7 @@ See `comint-dynamic-complete-filename'.  Returns t if successful."
 ;;
 ;; Setup for ediff.
 ;;
-(require 'ediff)
+(straight-use-package 'ediff)
 
 (defvar ediff-after-quit-hooks nil
   "* Hooks to run after ediff or emerge is quit.")
@@ -904,7 +948,7 @@ necessarily running."
 
 ;; https://github.com/magnars/multiple-cursors.el
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/multiple-cursors")
-(require 'multiple-cursors)
+(straight-use-package 'multiple-cursors)
 
 ;; Adds a cursor to each line in an active region.
 (global-set-key (kbd "C-c C-c") 'mc/edit-lines)
@@ -915,9 +959,9 @@ necessarily running."
 
 (setq time-902 (- (float-time) start-time))
 
-;; https://github.com/victorhge/iedit
-;; (add-to-list 'load-path "~/ConfigFiles/Elisp/iedit")
-(require 'iedit)
+;; ;; https://github.com/victorhge/iedit
+;; ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/iedit")
+;; (require 'iedit)
 
 ;; https://github.com/technomancy/clojure-mode
 ;; (add-to-list 'load-path "~/ConfigFiles/Elisp/clojure-mode")
@@ -935,10 +979,10 @@ necessarily running."
   "Loads the unicode support code and sets it up.  Not run on startup due to slowness."
   (interactive)
   (progn
-    (require 'persistent-soft)
-    (require 'ucs-utils)
-    (require 'font-utils)
-    (require 'unicode-fonts)
+    (straight-use-package 'persistent-soft)
+    (straight-use-package 'ucs-utils)
+    (straight-use-package 'font-utils)
+    (straight-use-package 'unicode-fonts)
     (unicode-fonts-setup)))
 
 ;; To test, do M-x list-charset-chars and look for chess pieces circa line 265x
@@ -1007,23 +1051,23 @@ necessarily running."
                          (1 . let*)
                          )))
 
-(require 'package)
-(add-to-list 'package-archives
-             '("marmalade" .
-               "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(package-initialize)
-
-(setq time-1003 (- (float-time) start-time))
-
-(when (not package-archive-contents)
-  (package-refresh-contents))
-
-;; (unless (package-installed-p 'scala-mode2)
-;;  (package-refresh-contents) (package-install 'scala-mode2))
-;; (unless (package-installed-p 'sbt-mode)
-;;   (package-refresh-contents) (package-install 'sbt-mode))
+;;;;; Trying to move to straight.el now
+;;
+;; (require 'package)
+;; ;(add-to-list 'package-archives
+;; ;             '("marmalade" .
+;; ;               "http://marmalade-repo.org/packages/"))
+;; (add-to-list 'package-archives
+;;              '("melpa" . "http://melpa.milkbox.net/packages/") t)
+;; (package-initialize)
+;;
+;; (when (not package-archive-contents)
+;;   (package-refresh-contents))
+;;
+;; ;; (unless (package-installed-p 'scala-mode2)
+;; ;;  (package-refresh-contents) (package-install 'scala-mode2))
+;; ;; (unless (package-installed-p 'sbt-mode)
+;; ;;   (package-refresh-contents) (package-install 'sbt-mode))
 
 (defun say-hello ()
   "Sends a hello message to the Mac OS X message center"
@@ -1045,11 +1089,14 @@ necessarily running."
                      (if subtitle (list "-subtitle" subtitle) nil)
                      (if group    (list "-group"    group)    nil))
              )))
-   (t (growl-page-me (if title title "")
+
+   ;; Dispble growl because it is deadware.
+   (nil (growl-page-me (if title title "")
                      (concat
                       (if subtitle (concat subtitle " ") "")
                       msg
-                      (if group (concat " " group) ""))))))
+                      (if group (concat " " group) ""))))
+   ))
 
 (defun say-when-compilation-finished (buffer string)
   "Sends a compile-done message to Mac OS X message center."
@@ -1087,9 +1134,9 @@ See also `yank' (\\[yank])."
 ;; I may want to look at 
 
 ;; FIXME: shouldn't this be unnecessary here?
-(require 'rcirc-notify)
+;; (straight-use-package 'rcirc-notify)
 
-(require 'growl)
+;; (require 'growl)
 
 ;; Helper I made to help port header files to rust after discovering
 ;; that Rust numeric literals do not have an octal variant.
@@ -1196,7 +1243,7 @@ See also `yank' (\\[yank])."
 ;; Maybe interesting but causing startup errors, so no.
 (cond
  (nil
-  (require 'flycheck)
+  (straight-use-package 'flycheck)
   (flycheck-define-checker
    servo-rust
    "A Rust syntax checker using the Rust compiler in Servo."
@@ -1215,24 +1262,26 @@ See also `yank' (\\[yank])."
   (add-hook 'rust-mode-hook (lambda () (flycheck-select-checker 'servo-rust)))
   ))
 
-;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
-;; http://www.youtube.com/watch?v=87tjF_mYvpE
-(require 'ido)
-(ido-mode t)
+;; ;; From watching "Emacs Chat: Magnar Sveen (@emacsrocks)
+;; ;; http://www.youtube.com/watch?v=87tjF_mYvpE
+;; (require 'ido)
+;; (ido-mode t)
 
-(require 'flx-ido)
-(flx-ido-mode 1)
-;; disable ido faces to see flx highlights
-(setq ido-use-faces nil)
+;; (require 'flx-ido)
+;; (flx-ido-mode 1)
+;; ;; disable ido faces to see flx highlights
+;; (setq ido-use-faces nil)
 
-(require 'ido-vertical-mode)
-(ido-vertical-mode)
+;; (require 'ido-vertical-mode)
+;; (ido-vertical-mode)
 
-(require 'guide-key)
-(setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
+;;;;; During shift to straight.el, removing anything I don't remember adding.
+;;
+;; (require 'guide-key)
+;; (setq guide-key/guide-key-sequence '("C-x r" "C-x 4"))
 
-(require 'mmm-mode)
- 
+(straight-use-package 'mmm-mode)
+
 (mmm-add-classes
  '((markdown-python
     :submode python-mode
@@ -1256,6 +1305,22 @@ See also `yank' (\\[yank])."
 (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-rust)
 (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-rust-code)
 
+(straight-use-package 'yasnippet)
+
+;; (straight-use-package 'lsp-mode)
+
+;;(straight-use-package 'lsp-mode
+;;                      :config (add-hook 'rust-mode-hook #'lsp))
+
+;; Using version from git to get fixes
+;; https://github.com/emacs-lsp/lsp-mode/pull/1258 and
+;; https://github.com/emacs-lsp/lsp-mode/pull/1274
+(straight-use-package
+ '(lsp-mode :type git :host github :repo "emacs-lsp/lsp-mode"))
+
+(straight-use-package 'company)
+(straight-use-package 'company-lsp)
+
 (defun average (&rest l) (/ (apply '+ l) (length l)))
 
 (defun ediff-moz-master ()
@@ -1264,6 +1329,33 @@ See also `yank' (\\[yank])."
         (rev1 "moz-master")
         (rev2 ""))
     (ediff-vc-internal rev1 rev2 nil)))
+
+(defvar read-buffer-visible-ok nil
+  "Control whether the switch-to-buffer prompt will prefer non-visible windows.")
+
+;; Hacked version of code from window.el.gz
+(defun read-buffer-to-switch (prompt)
+  "Read the name of a buffer to switch to, prompting with PROMPT.
+Return the name of the buffer as a string.
+
+This function is intended for the `switch-to-buffer' family of
+commands since these need to omit the name of the current buffer
+from the list of completions and default values."
+  (let ((rbts-completion-table (internal-complete-buffer-except)))
+    (minibuffer-with-setup-hook
+        (lambda ()
+          (setq minibuffer-completion-table rbts-completion-table)
+          ;; Since rbts-completion-table is built dynamically, we
+          ;; can't just add it to the default value of
+          ;; icomplete-with-completion-tables, so we add it
+          ;; here manually.
+          (if (and (boundp 'icomplete-with-completion-tables)
+                   (listp icomplete-with-completion-tables))
+              (set (make-local-variable 'icomplete-with-completion-tables)
+                   (cons rbts-completion-table
+                         icomplete-with-completion-tables))))
+      (read-buffer prompt (other-buffer (current-buffer) read-buffer-visible-ok)
+                   (confirm-nonexistent-file-or-buffer)))))
 
 (setq total-time (- (float-time) start-time))
 
@@ -1277,7 +1369,7 @@ See also `yank' (\\[yank])."
            (time-689 ,time-689)
            (time-800 ,time-800)
            (time-902 ,time-902)
-           (time-1003 ,time-1003)
            (time-1102 ,time-1102)))
          
 (message "Done loading .emacs %s" total-time)
+(put 'company-complete 'disabled nil)
