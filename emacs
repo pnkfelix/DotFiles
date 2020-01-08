@@ -161,9 +161,7 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
  '(comint-completion-fignore nil)
  '(comint-password-prompt-regexp
    "\\(^ *\\|\\( SMB\\|'s\\|Bad\\|CVS\\|Enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|Kerberos\\|LDAP\\|New\\|Old\\|Repeat\\|UNIX\\|\\[sudo]\\|enter\\(?: \\(?:\\(?:sam\\|th\\)e\\)\\)?\\|login\\|new\\|old\\) +\\)\\(?:Pass\\(?: phrase\\|phrase\\|word\\)\\|Response\\|pass\\(?: phrase\\|phrase\\|word\\)\\)\\(?:\\(?:, try\\)? *again\\| (empty for no passphrase)\\| (again)\\)?\\(?: for \\(?:'[^']*'\\|[^:]+\\)\\)?:\\s *\\'")
- '(compilation-search-path
-   (quote
-    (nil "/Users/fklock/Dev/Mozilla/issue54570/rust-54570/src")))
+ '(compilation-search-path (quote ("../src" nil)))
  '(compile-command "infer-remake.sh")
  '(completion-ignored-extensions
    (quote
@@ -173,7 +171,9 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
    (quote
     ("fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" default)))
  '(debug-on-error t)
+ '(egg-git-diff-options (quote ("--patience")))
  '(explicit-shell-file-name "bash")
+ '(fill-column 80)
  '(foreground-color "#708183")
  '(gdb-enable-debug t)
  '(ido-default-buffer-method (quote selected-window))
@@ -182,6 +182,7 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
  '(line-move-visual nil)
  '(lsp-rust-server (quote rust-analyzer))
  '(my-rcirc-notify-timeout 5)
+ '(package-selected-packages (quote (eglot guide-key ido-vertical-mode flx-ido flx)))
  '(rcirc-log-flag t)
  '(rcirc-server-alist
    (quote
@@ -197,6 +198,7 @@ This is just like `kill-line' but it restores the kill-ring to its prior state."
  '(semantic-default-submodes
    (quote
     (global-semantic-idle-completions-mode global-semantic-idle-scheduler-mode global-semanticdb-minor-mode global-semantic-idle-summary-mode global-semantic-idle-local-symbol-highlight-mode)))
+ '(sentence-end-double-space nil)
  '(tool-bar-mode nil)
  '(truncate-partial-width-windows nil)
  '(uniquify-buffer-name-style (quote post-forward-angle-brackets) nil (uniquify))
